@@ -1,0 +1,551 @@
+\documentclass[12pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage{scrextend}
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts, amsmath, amsthm, amssymb} % Math tools
+\usepackage[top = 1in, left = 1in, right = 1in, bottom = 1in]{geometry}
+\usepackage{setspace}
+\usepackage[bookmarks = false, hidelinks]{hyperref} 
+%\usepackage{booktabs}
+%\usepackage{array}
+%\usepackage{dcolumn}
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{siunitx}
+\usepackage[compact]{titlesec}
+\usepackage{listings} %Footnote Formatting
+\usepackage{baskervald} % Font
+\usepackage{enumitem} %Footnote Formatting
+\usepackage[style = american]{csquotes}
+\usepackage[american]{babel} % Font
+
+% Footnote Formatting
+\setlist{nolistsep, noitemsep}
+\setlength{\footnotesep}{1.2\baselineskip}
+\deffootnote[.2in]{0in}{0em}{\normalsize\thefootnotemark.\enskip}
+
+% Section Formatting 
+\def\ci{\perp\!\!\!\perp}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+
+\pagestyle{plain}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\begin{center}
+\textbf{Lab Assignment 2: Quant III}\\
+Kyle Davis\\
+With colaboration with Michael Murawski and John Harden.
+
+\end{center}
+\begin{flushleft}
+
+\noindent \textbf{Question 1:}
+
+We know the mean of $x$ but the mean of $y$ if $y$ (\textit{focus}) is defined as $y = \frac{1}{x}$ then $y$ is likely to be $\frac{1}{10}$ given that $x=10$. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{8675309}\hlstd{)}
+\hlstd{N} \hlkwb{<-} \hlnum{1000}\hlstd{; S} \hlkwb{<-} \hlnum{1e7}
+\hlstd{x} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(N,} \hlkwc{mean}\hlstd{=}\hlnum{10}\hlstd{,} \hlkwc{sd}\hlstd{=}\hlnum{1}\hlstd{)}
+\hlstd{mean_x} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{, S)}
+\hlstd{mean_x} \hlkwb{<-} \hlkwd{sample}\hlstd{(x, S,} \hlkwc{replace}\hlstd{=}\hlnum{TRUE}\hlstd{,} \hlkwc{prob} \hlstd{=} \hlkwa{NULL}\hlstd{)}
+
+\hlkwd{mean}\hlstd{(mean_x);} \hlnum{1}\hlopt{/}\hlkwd{mean}\hlstd{(mean_x)}
+\end{alltt}
+\begin{verbatim}
+## [1] 9.972921
+## [1] 0.1002715
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Our mean of $x$ matches what our DGP specifies, our $y$ value (\textit{focus}) is as thought, near to $.1$. This matches my initial intuition. 
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(pracma)} \hlcom{#runs Local polynomial approximation through Taylor series.}
+\hlstd{f} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{)} \hlnum{1}\hlopt{/}\hlstd{x}
+\hlstd{taylor.series} \hlkwb{<-} \hlkwd{taylor}\hlstd{(f,} \hlkwd{mean}\hlstd{(mean_x),} \hlkwc{n} \hlstd{=} \hlnum{4}\hlstd{)}
+      \hlcom{#taylor(function, series expansion, Taylor Series Order (1:4))}
+\hlkwd{mean}\hlstd{(taylor.series)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.08212378
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+Using the Taylor Series order of four we get a slightly lower estimate. As mentioned in class, this may have something to do with Jensen's inequality, and the Monte Carlo method we'll discover later may help with these processes later on (although I have yet to understand much of this).
+
+\hfill 
+
+\noindent \textbf{Question 2:}
+
+I made the following function thatcomputes the cosine similarity and distance, and returns both of these:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{cos.sim} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,}\hlkwc{y}\hlstd{)\{}
+  \hlcom{#cosine similarity formula:}
+  \hlstd{cosine.similarity} \hlkwb{<-} \hlkwd{sum}\hlstd{( x}\hlopt{%*%}\hlstd{y )}\hlopt{/}\hlstd{(}\hlkwd{sqrt}\hlstd{(} \hlkwd{sum}\hlstd{(x}\hlopt{^}\hlnum{2}\hlstd{) )} \hlopt{%*%} \hlkwd{sqrt}\hlstd{(} \hlkwd{sum}\hlstd{(y}\hlopt{^}\hlnum{2}\hlstd{) ))}
+  \hlstd{distance} \hlkwb{<-} \hlstd{cosine.similarity} \hlopt{-}\hlnum{1}
+  \hlstd{return.list} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{"Cosine Similarity:"} \hlstd{= cosine.similarity,}
+                      \hlstr{"Distance:"} \hlstd{= distance)}
+  \hlkwd{return}\hlstd{(return.list)}
+\hlstd{\}}
+
+\hlstd{x} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{8}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{5}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{8}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{5}\hlstd{)}
+
+\hlkwd{cos.sim}\hlstd{(x,y)} \hlcom{#cos.sim of 1; distance of 0 (makes sense)}
+\end{alltt}
+\begin{verbatim}
+## $`Cosine Similarity:`
+##      [,1]
+## [1,]    1
+## 
+## $`Distance:`
+##      [,1]
+## [1,]    0
+\end{verbatim}
+\begin{alltt}
+\hlstd{N} \hlkwb{<-}\hlnum{1000}
+\hlkwd{library}\hlstd{(Rlab)} \hlcom{#for rbern(Number, probability of success)}
+\hlstd{x} \hlkwb{<-} \hlkwd{rbern}\hlstd{(N,} \hlnum{.5}\hlstd{)}
+\hlstd{y} \hlkwb{<-} \hlkwd{rbern}\hlstd{(N,} \hlnum{.5}\hlstd{)}
+
+\hlkwd{cos.sim}\hlstd{(x,y)}\hlopt{$}\hlstr{'Cosine Similarity:'}
+\end{alltt}
+\begin{verbatim}
+##           [,1]
+## [1,] 0.5065329
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+Our cosine similarity is equal to 1 considering the input vectors are both traveling in the same (positive) direction, the distance between these data are zero given the similarity. Using a random Bernoulli input we get a cosine similarity of around $.5$. Let's bootstrap this:
+\begin{center}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{cos.sim} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{x}\hlstd{,}\hlkwc{y}\hlstd{)\{}
+  \hlkwa{if}\hlstd{(}\hlopt{!}\hlkwd{is.numeric}\hlstd{(x))\{}\hlkwd{return}\hlstd{(}\hlstr{"Numbers Needed in matrix (x)"}\hlstd{)\}}
+  \hlkwa{if}\hlstd{(}\hlopt{!}\hlkwd{is.numeric}\hlstd{(y))\{}\hlkwd{return}\hlstd{(}\hlstr{"Numbers Needed in matrix (y)"}\hlstd{)\}}
+
+  \hlstd{cosine.similarity} \hlkwb{<-} \hlkwd{sum}\hlstd{( x}\hlopt{%*%}\hlstd{y )}\hlopt{/}\hlstd{(}\hlkwd{sqrt}\hlstd{(} \hlkwd{sum}\hlstd{(x}\hlopt{^}\hlnum{2}\hlstd{) )} \hlopt{%*%} \hlkwd{sqrt}\hlstd{(} \hlkwd{sum}\hlstd{(y}\hlopt{^}\hlnum{2}\hlstd{) ))}
+  \hlstd{distance} \hlkwb{<-} \hlstd{cosine.similarity} \hlopt{-}\hlnum{1}
+  \hlstd{return.list} \hlkwb{<-} \hlkwd{list}\hlstd{(}\hlstr{"cosine similarity"} \hlstd{= cosine.similarity,} \hlstr{"distance"} \hlstd{= distance)}
+
+  \hlkwd{return}\hlstd{(return.list)}
+\hlstd{\}}
+
+\hlkwd{library}\hlstd{(Rlab)}
+
+\hlcom{#Empty matrix}
+\hlstd{simulation1} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{nrow} \hlstd{=} \hlnum{1000}\hlstd{,} \hlkwc{ncol} \hlstd{=} \hlnum{1}\hlstd{)}
+\hlstd{simulation2} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwc{nrow} \hlstd{=} \hlnum{1000}\hlstd{,} \hlkwc{ncol} \hlstd{=} \hlnum{1}\hlstd{)}
+
+\hlkwa{for} \hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{)}
+\hlstd{\{}
+  \hlstd{N} \hlkwb{<-}\hlnum{1000}
+  \hlstd{x} \hlkwb{<-} \hlkwd{rbern}\hlstd{(N,} \hlnum{.5}\hlstd{)}
+  \hlstd{y} \hlkwb{<-} \hlkwd{rbern}\hlstd{(N,} \hlnum{.5}\hlstd{)}
+
+  \hlstd{x2} \hlkwb{<-} \hlkwd{rbern}\hlstd{(N,} \hlnum{.8}\hlstd{)}
+  \hlstd{y2} \hlkwb{<-} \hlkwd{rbern}\hlstd{(N,} \hlnum{.8}\hlstd{)}
+
+  \hlstd{simulation1[i]} \hlkwb{<-} \hlkwd{cos.sim}\hlstd{(x,y)}\hlopt{$}\hlstr{'cosine similarity'}
+  \hlstd{simulation2[i]} \hlkwb{<-} \hlkwd{cos.sim}\hlstd{(x2,y2)}\hlopt{$}\hlstr{'cosine similarity'}
+
+\hlstd{\}}
+
+\hlkwd{quantile}\hlstd{(simulation1,}  \hlkwc{probs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{.1}\hlstd{,} \hlnum{.5}\hlstd{,} \hlnum{.9}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##       10%       50%       90% 
+## 0.4744437 0.5000347 0.5254493
+\end{verbatim}
+\begin{alltt}
+\hlkwd{quantile}\hlstd{(simulation2,}  \hlkwc{probs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{.1}\hlstd{,} \hlnum{.5}\hlstd{,} \hlnum{.9}\hlstd{))}
+\end{alltt}
+\begin{verbatim}
+##       10%       50%       90% 
+## 0.7855797 0.7993987 0.8140633
+\end{verbatim}
+\begin{alltt}
+\hlkwd{library}\hlstd{(ggplot2)}
+\hlstd{p1} \hlkwb{<-} \hlkwd{qplot}\hlstd{(simulation1)}\hlopt{+}
+  \hlkwd{geom_vline}\hlstd{(}\hlkwc{xintercept} \hlstd{=} \hlnum{.4742163}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"Red"}\hlstd{)}\hlopt{+}
+  \hlkwd{geom_vline}\hlstd{(}\hlkwc{xintercept} \hlstd{=} \hlnum{.5254967}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"Red"}\hlstd{)}\hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"1000 Bootstrapped Simulated Cosine Similarities"}\hlstd{)}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlstr{"Simulated Cosine Similarities"}\hlstd{)}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}
+
+\hlstd{p2} \hlkwb{<-} \hlkwd{qplot}\hlstd{(simulation2)}\hlopt{+}
+  \hlkwd{geom_vline}\hlstd{(}\hlkwc{xintercept} \hlstd{=} \hlnum{.7846132}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"Red"}\hlstd{)}\hlopt{+}
+  \hlkwd{geom_vline}\hlstd{(}\hlkwc{xintercept} \hlstd{=} \hlnum{.8141496}\hlstd{,} \hlkwc{col}\hlstd{=}\hlstr{"Red"}\hlstd{)}\hlopt{+}
+  \hlkwd{ggtitle}\hlstd{(}\hlstr{"1000 Bootstrapped Simulated Cosine Similarities"}\hlstd{)}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(}\hlstr{"Simulated Cosine Similarities"}\hlstd{)}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}
+
+\hlstd{p1}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4in]{figure/rberncos-1} 
+\begin{kframe}\begin{alltt}
+\hlstd{p2}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4in]{figure/rberncos-2} 
+
+\end{knitrout}
+\end{center}
+
+\clearpage
+Comparing our two models, we only change the systematic components from .5 to .8, our stochastic components stayed the same but shifting the error alongside the systematic changes. 
+
+
+
+
+
+\hfill 
+
+\textbf{Question 3:}
+
+Where $X$ is iid, distributed normally around some mean $\mu$ and variance, it is the case that $y_i$ is $= \text{exp}(x_i)$. We would expect that $y_i$ would run through the averages of $x_i$ and expoentiate them. Intution tells me that our expectation of $Y$ would be $\E{Y}=\text{exp}(\mu_x)$. I'll try to gain some more intution through simulation:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{exp_x} \hlkwb{<-} \hlkwd{rep}\hlstd{(}\hlnum{NA}\hlstd{, N)} \hlcom{#Empty Set}
+
+\hlkwa{for}\hlstd{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hlnum{1000}\hlstd{)} \hlcom{#Example Simulation}
+\hlstd{\{}
+  \hlstd{N} \hlkwb{<-} \hlnum{1000}
+  \hlstd{x} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(N,} \hlkwc{mean}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{sd}\hlstd{=}\hlnum{1}\hlstd{)}
+  \hlstd{exp_x[i]} \hlkwb{<-} \hlkwd{exp}\hlstd{(}\hlkwd{mean}\hlstd{(x))} \hlcom{#exp and mean}
+\hlstd{\}}
+
+\hlkwd{sqrt}\hlstd{(}\hlkwd{mean}\hlstd{(exp_x))}
+\end{alltt}
+\begin{verbatim}
+## [1] 2.718455
+\end{verbatim}
+\begin{alltt}
+\hlkwd{sqrt}\hlstd{(}\hlkwd{mean}\hlstd{(exp_x)}\hlopt{/}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.922238
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+After running a sample simulation, it seems as if my initial intution was off compared to the posited assumption. when we square root the exponentiated means and divide by two we get closer to what we set the ``true mean'' as (2).
+
+\hfill
+
+\textbf{Question 4:}
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hlstd{(MASS)} \hlcom{#for mvrnorm}
+\hlkwd{library}\hlstd{(texreg)} \hlcom{#for tables}
+
+  \hlstd{N} \hlkwb{<-} \hlnum{1000}
+  \hlstd{mu} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{5}\hlstd{)}
+  \hlstd{Sigma} \hlkwb{<-} \hlkwd{matrix}\hlstd{(} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{ncol}\hlstd{=} \hlnum{2}\hlstd{)}
+  \hlstd{mvr} \hlkwb{<-} \hlkwd{mvrnorm}\hlstd{(N, mu, Sigma)}
+  \hlstd{b} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{)}
+  \hlstd{ones} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{nrow}\hlstd{=}\hlnum{1000}\hlstd{,} \hlkwc{ncol}\hlstd{=}\hlnum{1}\hlstd{)}
+  \hlstd{X} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(ones, mvr[,}\hlnum{1}\hlstd{], mvr[,}\hlnum{2}\hlstd{]),} \hlkwc{nrow}\hlstd{=N)}
+  \hlstd{e} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(N,} \hlnum{0}\hlstd{,} \hlkwc{sd}\hlstd{=}\hlkwd{sqrt}\hlstd{(}\hlnum{4}\hlstd{))} \hlcom{#errors as listed in DGP}
+  \hlstd{y} \hlkwb{<-} \hlstd{b[}\hlnum{1}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{1}\hlstd{]}\hlopt{+} \hlstd{b[}\hlnum{2}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{2}\hlstd{]}\hlopt{+} \hlstd{b[}\hlnum{3}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{3}\hlstd{]} \hlopt{+} \hlstd{e}
+  \hlstd{my_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(ones, mvr[,}\hlnum{1}\hlstd{], mvr[,}\hlnum{2}\hlstd{], y)}
+  \hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{X[,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{X[,}\hlnum{3}\hlstd{])}
+
+\hlcom{#summary(m1)$coef }
+
+
+\hlcom{#For Bootstrapping:}
+\hlstd{bs.sample} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{)}
+\hlstd{\{}
+  \hlstd{idx} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(dat),} \hlkwd{nrow}\hlstd{(dat),} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+  \hlstd{dat[idx,]}
+\hlstd{\}}
+
+\hlstd{bs.routine} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{)}
+\hlstd{\{}
+  \hlstd{sample.dta} \hlkwb{<-} \hlkwd{bs.sample}\hlstd{(dat)}
+  \hlkwd{coef}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{X[,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{X[,}\hlnum{3}\hlstd{],} \hlkwc{data} \hlstd{= my_data))}
+\hlstd{\}}
+
+\hlstd{bs_est} \hlkwb{<-} \hlkwd{replicate}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwd{bs.routine}\hlstd{(}\hlkwc{dat} \hlstd{= my_data))} \hlcom{#replicate our estimates}
+\hlstd{bs_mean} \hlkwb{<-} \hlkwd{rowMeans}\hlstd{(bs_est)} \hlcom{#report our bootstrap estimate means}
+\hlstd{bs_ci} \hlkwb{<-} \hlkwd{t}\hlstd{(}\hlkwd{apply}\hlstd{(bs_est,} \hlnum{1}\hlstd{, quantile,} \hlkwc{probs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.05}\hlstd{,} \hlnum{0.95}\hlstd{)))} \hlcom{#make ci's}
+\hlstd{bs_results} \hlkwb{<-} \hlkwd{cbind}\hlstd{(bs_mean, bs_ci)} \hlcom{#create reference matrix for texreg}
+\hlkwd{colnames}\hlstd{(bs_results)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Est"}\hlstd{,} \hlstr{"Low"}\hlstd{,} \hlstr{"High"}\hlstd{)} \hlcom{#rename}
+
+\hlcom{#create table output, overriding confidence intervals with bootstrap low-high bounds}
+\hlkwd{texreg}\hlstd{(}\hlkwc{l}\hlstd{=} \hlkwd{list}\hlstd{(m1),} \hlkwc{stars} \hlstd{=} \hlkwd{numeric}\hlstd{(}\hlnum{0}\hlstd{),}
+       \hlkwc{custom.coef.names} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Intercept"}\hlstd{,} \hlstr{"x_1"}\hlstd{,} \hlstr{"x_2"}\hlstd{),}
+       \hlkwc{override.ci.low} \hlstd{=} \hlkwd{c}\hlstd{(bs_results[,} \hlnum{2}\hlstd{]),}
+       \hlkwc{override.ci.up} \hlstd{=} \hlkwd{c}\hlstd{(bs_results[,} \hlnum{3}\hlstd{]),}
+       \hlkwc{caption.above} \hlstd{= T,} \hlkwc{float.pos} \hlstd{=} \hlstr{"h!"}\hlstd{,}
+       \hlkwc{custom.note} \hlstd{=} \hlstr{"CI's Overridden by Bootstrap; [.05, .95]"}\hlstd{)}
+
+
+\hlcom{#Changing out Errors: Overriding model 1}
+\hlstd{N} \hlkwb{<-} \hlnum{1000}
+\hlstd{mu} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{5}\hlstd{)}
+\hlstd{Sigma} \hlkwb{<-} \hlkwd{matrix}\hlstd{(} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{ncol}\hlstd{=} \hlnum{2}\hlstd{)}
+\hlstd{mvr} \hlkwb{<-} \hlkwd{mvrnorm}\hlstd{(N, mu, Sigma)}
+\hlstd{b} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{)}
+\hlstd{e} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(N,} \hlnum{0}\hlstd{,} \hlkwc{sd}\hlstd{=}\hlkwd{sqrt}\hlstd{(}\hlkwd{abs}\hlstd{(x[,}\hlnum{2}\hlstd{])))} \hlcom{#error now changed}
+\hlstd{ones} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{nrow}\hlstd{=}\hlnum{1000}\hlstd{,} \hlkwc{ncol}\hlstd{=}\hlnum{1}\hlstd{)}
+\hlstd{X} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(ones, mvr[,}\hlnum{1}\hlstd{], mvr[,}\hlnum{2}\hlstd{]),} \hlkwc{nrow}\hlstd{=N)}
+\hlstd{y} \hlkwb{<-} \hlstd{b[}\hlnum{1}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{1}\hlstd{]}\hlopt{+} \hlstd{b[}\hlnum{2}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{2}\hlstd{]}\hlopt{+} \hlstd{b[}\hlnum{3}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{3}\hlstd{]} \hlopt{+} \hlstd{e}
+\hlstd{my_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(ones, mvr[,}\hlnum{1}\hlstd{], mvr[,}\hlnum{2}\hlstd{], y)}
+\hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{X[,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{X[,}\hlnum{3}\hlstd{])}
+
+\hlcom{#For Bootstrapping:}
+\hlstd{bs.sample} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{)}
+\hlstd{\{}
+  \hlstd{idx} \hlkwb{<-} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlkwd{nrow}\hlstd{(dat),} \hlkwd{nrow}\hlstd{(dat),} \hlkwc{replace} \hlstd{=} \hlnum{TRUE}\hlstd{)}
+  \hlstd{dat[idx,]}
+\hlstd{\}}
+
+\hlstd{bs.routine} \hlkwb{<-} \hlkwa{function}\hlstd{(}\hlkwc{dat}\hlstd{)}
+\hlstd{\{}
+  \hlstd{sample.dta} \hlkwb{<-} \hlkwd{bs.sample}\hlstd{(dat)}
+  \hlkwd{coef}\hlstd{(}\hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{X[,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{X[,}\hlnum{3}\hlstd{],} \hlkwc{data} \hlstd{= my_data))}
+\hlstd{\}}
+
+\hlstd{bs_est} \hlkwb{<-} \hlkwd{replicate}\hlstd{(}\hlnum{1000}\hlstd{,} \hlkwd{bs.routine}\hlstd{(}\hlkwc{dat} \hlstd{= my_data))}
+\hlstd{bs_mean} \hlkwb{<-} \hlkwd{rowMeans}\hlstd{(bs_est)}
+\hlstd{bs_ci} \hlkwb{<-} \hlkwd{t}\hlstd{(}\hlkwd{apply}\hlstd{(bs_est,} \hlnum{1}\hlstd{, quantile,} \hlkwc{probs} \hlstd{=} \hlkwd{c}\hlstd{(}\hlnum{0.05}\hlstd{,} \hlnum{0.95}\hlstd{)))}
+\hlstd{bs_results} \hlkwb{<-} \hlkwd{cbind}\hlstd{(bs_mean, bs_ci)}
+\hlkwd{colnames}\hlstd{(bs_results)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Est"}\hlstd{,} \hlstr{"Low"}\hlstd{,} \hlstr{"High"}\hlstd{)}
+
+\hlkwd{texreg}\hlstd{(}\hlkwc{l}\hlstd{=} \hlkwd{list}\hlstd{(m1),} \hlkwc{stars} \hlstd{=} \hlkwd{numeric}\hlstd{(}\hlnum{0}\hlstd{),}
+       \hlkwc{custom.model.names} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Changed Error Model 1"}\hlstd{),}
+       \hlkwc{custom.coef.names} \hlstd{=} \hlkwd{c}\hlstd{(}\hlstr{"Intercept"}\hlstd{,} \hlstr{"x_1"}\hlstd{,} \hlstr{"x_2"}\hlstd{),}
+       \hlkwc{override.ci.low} \hlstd{=} \hlkwd{c}\hlstd{(bs_results[,} \hlnum{2}\hlstd{]),}
+       \hlkwc{override.ci.up} \hlstd{=} \hlkwd{c}\hlstd{(bs_results[,} \hlnum{3}\hlstd{]),}
+       \hlkwc{caption.above} \hlstd{= T,} \hlkwc{float.pos} \hlstd{=} \hlstr{"h!"}\hlstd{,}
+       \hlkwc{custom.note} \hlstd{=} \hlstr{"CI's Overridden by Bootstrap; [.05, .95]"}\hlstd{)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+\begin{table}[h!]
+\caption{Statistical models}
+\begin{center}
+\begin{tabular}{l c }
+\hline
+ & Model 1 \\
+\hline
+Intercept  & $1.96^{*}$        \\
+           & $[1.96;\ 1.96]$   \\
+x\_1       & $-1.05^{*}$       \\
+           & $[-1.05;\ -1.05]$ \\
+x\_2       & $3.04^{*}$        \\
+           & $[3.04;\ 3.04]$   \\
+\hline
+R$^2$      & 0.88              \\
+Adj. R$^2$ & 0.88              \\
+Num. obs.  & 1000              \\
+RMSE       & 2.06              \\
+\hline
+\multicolumn{2}{l}{\scriptsize{CI's Overridden by Bootstrap; [.05, .95]}}
+\end{tabular}
+\label{table:coefficients}
+\end{center}
+\end{table}
+
+
+\begin{table}[h!]
+\caption{Statistical models}
+\begin{center}
+\begin{tabular}{l c }
+\hline
+ & Changed Error Model 1 \\
+\hline
+Intercept  & $1.69^{*}$        \\
+           & $[1.69;\ 1.69]$   \\
+x\_1       & $-1.00^{*}$       \\
+           & $[-1.00;\ -1.00]$ \\
+x\_2       & $3.04^{*}$        \\
+           & $[3.04;\ 3.04]$   \\
+\hline
+R$^2$      & 0.88              \\
+Adj. R$^2$ & 0.88              \\
+Num. obs.  & 1000              \\
+RMSE       & 2.07              \\
+\hline
+\multicolumn{2}{l}{\scriptsize{CI's Overridden by Bootstrap; [.05, .95]}}
+\end{tabular}
+\label{table:coefficients}
+\end{center}
+\end{table}
+
+
+Between the two models we see that chaning the error changes the stochastic bounds around $x_1$ a little after bootstrapping. Changing our error in DGP 2 allowed us to see how only the errors might change, yet we changed the errors in absolute terms with our x variable: Table 2 shows some of the differing $\hat{\beta}$ and errors we get across models. 
+
+
+
+
+
+\clearpage
+
+
+\textbf{Question 5:}
+
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{#Generate DGP:}
+\hlkwd{library}\hlstd{(MASS)} \hlcom{#for mvrnorm}
+
+\hlstd{N} \hlkwb{<-} \hlnum{1000}
+\hlstd{mu} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{5}\hlstd{,}\hlnum{5}\hlstd{)}
+\hlstd{Sigma} \hlkwb{<-} \hlkwd{matrix}\hlstd{(} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{0}\hlstd{,} \hlnum{3}\hlstd{),} \hlkwc{nrow} \hlstd{=} \hlnum{2}\hlstd{,} \hlkwc{ncol}\hlstd{=} \hlnum{2}\hlstd{)}
+\hlstd{mvr} \hlkwb{<-} \hlkwd{mvrnorm}\hlstd{(N, mu, Sigma)}
+\hlstd{b} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlnum{2}\hlstd{,} \hlopt{-}\hlnum{1}\hlstd{,} \hlnum{3}\hlstd{)}
+\hlstd{ones} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlnum{1}\hlstd{,} \hlkwc{nrow}\hlstd{=}\hlnum{1000}\hlstd{,} \hlkwc{ncol}\hlstd{=}\hlnum{1}\hlstd{)}
+\hlstd{X} \hlkwb{<-} \hlkwd{matrix}\hlstd{(}\hlkwd{c}\hlstd{(ones, mvr[,}\hlnum{1}\hlstd{], mvr[,}\hlnum{2}\hlstd{]),} \hlkwc{nrow}\hlstd{=N)}
+\hlstd{e} \hlkwb{<-} \hlkwd{rnorm}\hlstd{(N,} \hlnum{0}\hlstd{,} \hlkwc{sd}\hlstd{=}\hlkwd{sqrt}\hlstd{(}\hlnum{4}\hlstd{))}
+\hlstd{y} \hlkwb{<-} \hlstd{b[}\hlnum{1}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{1}\hlstd{]}\hlopt{+} \hlstd{b[}\hlnum{2}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{2}\hlstd{]}\hlopt{+} \hlstd{b[}\hlnum{3}\hlstd{]}\hlopt{*}\hlstd{X[,}\hlnum{3}\hlstd{]} \hlopt{+} \hlstd{e}
+\hlstd{my_data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(ones, mvr[,}\hlnum{1}\hlstd{], mvr[,}\hlnum{2}\hlstd{], y)}
+\hlstd{m1} \hlkwb{<-} \hlkwd{lm}\hlstd{(y} \hlopt{~} \hlstd{X[,}\hlnum{2}\hlstd{]} \hlopt{+} \hlstd{X[,}\hlnum{3}\hlstd{],} \hlkwc{data}\hlstd{=my_data)}
+\hlcom{# summary(m1) }
+
+
+\hlcom{#Test set training set}
+\hlstd{n} \hlkwb{=} \hlkwd{nrow}\hlstd{(my_data)}
+\hlstd{trainIndex} \hlkwb{=} \hlkwd{sample}\hlstd{(}\hlnum{1}\hlopt{:}\hlstd{n,} \hlkwc{size} \hlstd{=} \hlkwd{round}\hlstd{(}\hlnum{0.8}\hlopt{*}\hlstd{n),} \hlkwc{replace}\hlstd{=}\hlnum{FALSE}\hlstd{)}
+\hlstd{train} \hlkwb{=} \hlstd{my_data[trainIndex ,]} \hlcom{#80% sample}
+\hlstd{test} \hlkwb{=} \hlstd{my_data[}\hlopt{-}\hlstd{trainIndex ,]} \hlcom{#Remaining 20% by adding minus (-) sign}
+
+\hlkwd{colnames}\hlstd{(train)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Intercept"}\hlstd{,} \hlstr{"MVRx1"}\hlstd{,} \hlstr{"MVRx2"}\hlstd{,} \hlstr{"y"}\hlstd{)} \hlcom{#rename}
+\hlkwd{colnames}\hlstd{(test)} \hlkwb{<-} \hlkwd{c}\hlstd{(}\hlstr{"Intercept"}\hlstd{,} \hlstr{"MVRx1"}\hlstd{,} \hlstr{"MVRx2"}\hlstd{,} \hlstr{"y"}\hlstd{)} \hlcom{#rename}
+
+
+\hlcom{#creating data frames for MSE:}
+\hlstd{training.data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(train}\hlopt{$}\hlstd{MVRx1, train}\hlopt{$}\hlstd{MVRx2)}
+\hlstd{testing.data} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(test}\hlopt{$}\hlstd{MVRx1, test}\hlopt{$}\hlstd{MVRx2)}
+
+
+\hlcom{#linear models for each:}
+\hlstd{mtrain} \hlkwb{<-} \hlkwd{lm}\hlstd{(train}\hlopt{$}\hlstd{y} \hlopt{~} \hlstd{train}\hlopt{$}\hlstd{MVRx1} \hlopt{+} \hlstd{train}\hlopt{$}\hlstd{MVRx2,} \hlkwc{data} \hlstd{= train)}
+\hlcom{# summary(mtrain) }
+\hlcom{# predict(mtrain) #predicted values for mtrain}
+\hlstd{mtest} \hlkwb{<-} \hlkwd{lm}\hlstd{(test}\hlopt{$}\hlstd{y} \hlopt{~} \hlstd{test}\hlopt{$}\hlstd{MVRx1} \hlopt{+} \hlstd{test}\hlopt{$}\hlstd{MVRx2,} \hlkwc{data} \hlstd{= test)}
+\hlcom{# summary(mtest)}
+
+
+\hlcom{#MSE between full data and our training data}
+\hlkwd{mean}\hlstd{((my_data} \hlopt{-} \hlkwd{predict}\hlstd{(mtrain))}\hlopt{^}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 92.58562
+\end{verbatim}
+\begin{alltt}
+\hlkwd{mean}\hlstd{((training.data} \hlopt{-} \hlkwd{predict}\hlstd{(mtest))}\hlopt{^}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 75.52496
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Transform Test Model:}
+\hlstd{mTest2} \hlkwb{<-} \hlkwd{lm}\hlstd{(test}\hlopt{$}\hlstd{y} \hlopt{~} \hlstd{(}\hlkwd{log2}\hlstd{(test}\hlopt{$}\hlstd{MVRx1))} \hlopt{+} \hlstd{test}\hlopt{$}\hlstd{MVRx2,} \hlkwc{data} \hlstd{= test)}
+\hlcom{# summary(mTesty)}
+
+\hlkwd{mean}\hlstd{((training.data} \hlopt{-} \hlkwd{predict}\hlstd{(mTest2))}\hlopt{^}\hlnum{2}\hlstd{)}
+\end{alltt}
+\begin{verbatim}
+## [1] 75.13954
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+What we find from running our test-set-training set is that when we remove data, as we have smaller N's in our test set, our mean squared errors become more uncertain. However, when we transfrom variables in our model, our mean squared errors do not change all too radically but somewhat as we shift away from normality and other linear model assumptions (errors distributed normally, mean of zero). 
+
+For this reason I was unable to find a model that fit the data better with the test set against the training set because our DGP fits the standard ols normal transformations particuarlly well already when tested to the full model.
+
+
+
+
+
+
+
+
+
+
+
+
+\end{flushleft}
+\end{document}

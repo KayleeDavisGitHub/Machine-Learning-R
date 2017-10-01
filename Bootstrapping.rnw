@@ -1,0 +1,22 @@
+\documentclass{article}
+
+\begin{document}
+
+Hello World.
+
+<< label, echo=FALSE, eval=TRUE >>=
+
+X <- Y(2)
+
+@
+
+
+
+
+
+
+
+
+
+
+\end{document}
