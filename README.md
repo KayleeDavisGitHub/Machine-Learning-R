@@ -1,5 +1,6 @@
 # Machine-Learning
--- Replication and notes on machine learning practice --
+-- Replication and notes on machine learning practice --		
+
 These files follow an intensive quantiative methods course at The Ohio State University.
 
 # Simulation and Bootstrapping
