@@ -15,3 +15,7 @@ Here the Lab 4 files go over generating synthetic data and using penalized regre
 Lab 5 goes into using Support Vector Models (SVMs) and classification trees for classification. Lab 5 uses synthetic data.
 
 Both labs provide vizualizations and attempts to summarize a dense methodological approach by providing .pdf's (and LaTeX code) detailing the intution behind these approaches. 
+
+
+
+Email: MailKyleDavis@gmail.com
