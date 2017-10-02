@@ -1,0 +1,594 @@
+---
+title: "Lab 1: Simulated Regression"
+author: "Kyle E. Davis"
+date: "August 30, 2017 - September 3, 2017"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(fig.width=12, fig.height=8, echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+## Question 1
+
+
+```{r Q1}
+set.seed(12345)
+N <- 1000
+#Two random x variables, with same mean and same error. Distributed Normally
+x_1 <- rnorm(N, mean=5, sd=sqrt(16))      
+x_2 <- rnorm(N, mean=5, sd=sqrt(16))
+#beta values to multiply with the Intercept, X_1, and X_2 matrix. 
+b <- c(2, -1, 3)                          
+#Perfect-world errors: e~Normal(0, sig^2). set pretty low, Number=1000
+e <- rnorm(N, 0, sd=sqrt(4))          
+#This vector of ones is to generate our intercept along with the "2" in our beta
+ones <- matrix(1, nrow=1000, ncol=1)      
+X <- matrix(c(ones, x_1, x_2), nrow=N)
+#head(X)  #Checked that the Matrix comes out right, and is intuitive
+#y = intercept + b1*X_1 + b2*X_2 + some error
+y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e  
+my_data <- data.frame(x_1, x_2, y) 
+#After having y, we can run our formula, OLS using lm()
+m1 <- lm(y ~ x_1 + x_2, data=my_data)                    
+#summary(m1)$coef, reported in texreg (package)
+
+```
+We add a matrix of ones within X to provide an intercept into the model. This incercept is multiplied by our beta value (2). We find that our estimates in our model come very close to our defined beta estimates, this makes sense since our betas were pre-defined this way. Each variable is statistically significant given we entered a pretty low error value into the model.
+
+\begin{table}[h!]
+\caption{Statistical model}
+\begin{center}
+\begin{tabular}{l c }
+\hline
+ & Model 1 \\
+\hline
+Intercept  & $1.99$   \\
+           & $(0.12)$ \\
+x\_1       & $-1.01$  \\
+           & $(0.02)$ \\
+x\_2       & $3.00$   \\
+           & $(0.02)$ \\
+\hline
+R$^2$      & 0.98     \\
+Adj. R$^2$ & 0.98     \\
+Num. obs.  & 1000     \\
+RMSE       & 1.92     \\
+\hline
+\multicolumn{2}{l}{\scriptsize{Dependent variable: y}}
+\end{tabular}
+\label{table:coefficients}
+\end{center}
+\end{table}
+
+
+\newpage
+
+
+## Question 2
+
+
+```{r Simulation 1, echo=TRUE}
+
+#Let's set up an Empty matrix
+simulation1 <- matrix(nrow = 1000, ncol = 6)
+#head(simulation1)  # Matrix of NA's to fill in simulated values later.
+
+for (i in 1:1000)
+{
+  N <- 1000                            #Model from earlier
+  x_1 <- rnorm(N, mean=5, sd=sqrt(16))
+  x_2 <- rnorm(N, mean=5, sd=sqrt(16))
+  b <- c(2, -1, 3)
+  e <- rnorm(N, 0, sd=sqrt(4))
+  ones <- matrix(1, nrow=1000, ncol=1)
+  X <- matrix(c(ones, x_1, x_2), nrow=N)
+  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  my_data <- data.frame(x_1, x_2, y)
+  m1 <- lm(y ~ x_1 + x_2)
+  
+  sm1 <- summary(m1)      #summary table is used to easily locate standard errors (se)
+  
+  simulation1[i,1] <- m1$coef[1]      #storing models first coef: Intercept
+  simulation1[i,2] <- m1$coef[2]      #x_1 coef estimate
+  simulation1[i,3] <- m1$coef[3]      #x_2 coef estimate
+  simulation1[i,4] <- sm1$coefficients[1,2]     #standard error for Intercept
+  simulation1[i,5] <- sm1$coefficients[2,2]     #se x_1
+  simulation1[i,6] <- sm1$coefficients[3,2]     #se x_2
+}
+
+#head(simulation1)  #To check our now-full matrix to see if values make sense
+
+```
+
+Next, we will do the same simulation but removing x_2 in our model. Then we will plot each of the variables from the two simulations.The code for plotting has been witheld to save space on page, but it is done using ggplot and a function to make the plots appear next to one another. 
+
+
+```{r Simulation 2, echo= TRUE}
+
+#Removing x_2 now
+#New empty matrix
+simulation2 <- matrix(nrow = 1000, ncol = 4)
+#head(simulation2)  #Check: Confirmed Empty
+
+for (i in 1:1000)
+{
+  N <- 1000
+  x_1 <- rnorm(N, mean=5, sd=sqrt(16)) 
+  x_2 <- rnorm(N, mean=5, sd=sqrt(16))
+  b <- c(2, -1, 3)                      
+  e <- rnorm(N, 0, sd=sqrt(4))
+  ones <- matrix(1, nrow=1000, ncol=1)
+  X <- matrix(c(ones, x_1, x_2), nrow=N)  
+  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e      
+  m1 <- lm(y ~ x_1)                       #no X_2 regressed, but included in DGP
+  
+  sm1 <- summary(m1) 
+  
+  simulation2[i,1] <- sm1$coef[1,1]     #Storing models first coef, Intercept
+  simulation2[i,2] <- sm1$coef[2,1]     #x_1 coef estimate
+  simulation2[i,3] <- sm1$coef[1,2]      #standard error for Intercept
+  simulation2[i,4] <- sm1$coef[2,2]      #se for x_1
+}
+
+#Full Model Means
+# mean(simulation1[,1]) #mean estimate for b_0 (= 2)
+# mean(simulation1[,2]) #mean estimate for b_1 X_1 estimate (= -1)
+# mean(simulation1[,3]) #mean estimate for b_2 x_2 estimate (= 3)
+
+#Limited Model Means
+# mean(simulation2[,1]) #mean b_0 (=2)
+# mean(simulation2[,2]) #mean b_1 of x_1 (=-1)
+#This makes sense given our initial model data b=c(2, -1, 3) 
+```
+
+```{r plot, echo= FALSE}
+library(ggplot2)
+#Creating each graph as an object (p) and the location I wish
+#  the multiplot function to place them at.
+
+#Intercept Simulation 1
+p1 <- qplot(simulation1[,1])+
+  theme_bw()+
+  ggtitle(expression(paste(beta[0], " Values (Sim. 1)")))+
+  xlab(expression(paste("Simulated ", beta[0])))
+
+#X_1 Simulation 1
+p3 <- qplot(simulation1[,2])+
+  theme_bw()+
+  ggtitle(expression(paste( x[1], " Values (Sim. 1)")))+
+  xlab(expression(paste("Simulated ", beta[1])))
+
+#X_2 Simulation 1
+p5 <- qplot(simulation1[,3])+
+  theme_bw()+
+  ggtitle(expression(paste( x[2], " Values (Sim. 1)")))+
+  xlab(expression(paste("Simulated ", beta[2])))
+
+
+#Intercept Simulation 2
+p2 <- qplot(simulation2[,1])+
+  theme_bw()+
+  ggtitle(expression(paste(beta[0], " Values (Sim. 2)")))+
+  xlab(expression(paste("Simulated ", beta[0])))
+
+#X_1 Simulation 2
+p4 <- qplot(simulation2[,2])+
+  theme_bw()+
+  ggtitle(expression(paste( x[1], " Values (Sim. 2)")))+
+  xlab(expression(paste("Simulated ", beta[1])))
+ 
+
+
+#Multiplot Function, This was created with help from the RBloggers Community
+
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+
+#Call multiplot for each object, and (finally) generate our graph:
+#Simulation 1 on first row, and Simulation 2 on second row
+#And each variable on the columns. (Easily comparable)
+multiplot(p1, p2, p3, p4, p5, cols=3)
+
+
+```
+
+There seems to be some differences between our two simulated models. It makes sense that we find our normally distriubted values centering around their respective beta values, with a pretty low standard of error:
+
+```{r Errors}
+
+mean(simulation1[,5]) #Simulation 1's X_1 se's (0.0158)
+mean(simulation2[,4]) #simulation 2's X_1 se's (0.0962)
+
+mean(simulation1[,4])  #Simulation 1's Intercept se (.128)
+mean(simulation2[,3])  #Simulation 2's Intercept se (.615)
+#Errors are larger when we take x_2 out of our analysis (less variation understood)
+
+
+```
+
+Yet, not including the x_2 variable has left our intercept estimate off and our errors to become larger. This is expected when not including a variable that correlates to both X and Y (omitted variable bias). Yet, most of the time our values fell within two standard errors.
+
+
+
+## Question 3
+For Question 3, we'll be utilizing the \texttt{MASS} package to create a multivariate model and simulate it similarly to Question 2:
+
+```{r Q3}
+library(MASS)
+#Simulating Regression 1,000 times
+simulation3 <- matrix(nrow = 1000, ncol = 6)
+
+for (i in 1:1000)
+{
+  N <- 1000
+  mu <- c(5,5)
+  x_1 <- rnorm(N, mean=5, sd=sqrt(16))
+  x_2 <- rnorm(N, mean=5, sd=sqrt(16))
+  Sigma <- matrix( c(4, 2, 2, 4), nrow = 2, ncol= 2)
+  mvr <- mvrnorm(N, mu, Sigma)
+  b <- c(2, -1, 3)
+  e <- rnorm(N, 0, sd=sqrt(4))
+  ones <- matrix(1, nrow=1000, ncol=1)
+  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  m1 <- lm(y ~ X[,2] + X[,3])
+  summary(m1)
+  
+  sm1 <- summary(m1)
+
+  #Estimates
+  simulation3[i,1] <- sm1$coef[1,1] #recording Intercept Estimate
+  simulation3[i,2] <- sm1$coef[2,1] #x_1 Estimate
+  simulation3[i,3] <- sm1$coef[3,1] #x_2 Estimate
+  #Errors
+  simulation3[i,4] <- sm1$coef[1,2] #Intercept Std. Error
+  simulation3[i,5] <- sm1$coef[2,2] #se x_1
+  simulation3[i,6] <- sm1$coef[3,2] #se x_2
+}
+
+#Check Simulation was ran correctly
+#head(simulation3)
+
+
+#Restricted Model Without x_2
+simulation4 <- matrix(nrow = 1000, ncol = 4)
+
+for (i in 1:1000)
+{
+  N <- 1000
+  mu <- c(5,5)
+  x_1 <- rnorm(N, mean=5, sd=sqrt(16))
+  x_2 <- rnorm(N, mean=5, sd=sqrt(16))
+  Sigma <- matrix( c(4, 2, 2, 4), nrow = 2, ncol= 2)
+  mvr <- mvrnorm(N, mu, Sigma)
+  mvr
+  b <- c(2, -1,3) 
+  e <- rnorm(N, 0, sd=sqrt(4))
+  ones <- matrix(1, nrow=1000, ncol=1)
+  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e 
+  m1 <- lm(y ~ X[,2])
+  
+  sm1 <- summary(m1)
+  
+  #Estimates
+  simulation4[i,1] <- sm1$coef[1,1] #recording Intercept Estimate
+  simulation4[i,2] <- sm1$coef[2,1] #x_1 Estimate
+
+  #Errors
+  simulation4[i,3] <- sm1$coef[1,2] #Intercept Std. Error
+  simulation4[i,4] <- sm1$coef[2,2] #se x_1
+
+}
+
+#head(simulation3) #Full
+#head(simulation4) #Limited
+  
+```
+
+```{r Plotting Q3, echo=FALSE}
+
+library(ggplot2)
+#Creating each graph as an object (p) and the location I wish
+#  the multiplot function to place them at.
+
+#Intercept Simulation 3
+p1 <- qplot(simulation3[,1])+
+  theme_bw()+
+  ggtitle(expression(paste(beta[0], " Values (Sim. 3)")))+
+  xlab(expression(paste("Simulated ", beta[0])))
+
+#X_1 Simulation 3
+p3 <- qplot(simulation3[,2])+
+  theme_bw()+
+  ggtitle(expression(paste( x[1], " Values (Sim. 3)")))+
+  xlab(expression(paste("Simulated ", beta[1])))
+
+#X_2 Simulation 3
+p5 <- qplot(simulation3[,3])+
+  theme_bw()+
+  ggtitle(expression(paste( x[2], " Values (Sim. 3)")))+
+  xlab(expression(paste("Simulated ", beta[2])))
+
+
+#Intercept Simulation 4
+p2 <- qplot(simulation4[,1])+
+  theme_bw()+
+  ggtitle(expression(paste(beta[0], " Values (Sim. 4)")))+
+  xlab(expression(paste("Simulated ", beta[0])))
+
+#X_1 Simulation 2
+p4 <- qplot(simulation4[,2])+
+  theme_bw()+
+  ggtitle(expression(paste( x[1], " Values (Sim. 4)")))+
+  xlab(expression(paste("Simulated ", beta[1])))
+
+
+#custom multiplot function, I rearranged some of the graph objects to arrange them better
+multiplot(p1, p2, p3, p4, p5, cols=3)
+
+```
+
+These plots show that Simulation 3 (top row) center normally around the beta parameter, yet in Simulation 4 (bottom row) our estimates are off because of omitted variable bias of not having x_2. Note the errors become larger in simulation 4 as well:
+
+```{r Err}
+mean(simulation3[,5]) #Simulation 3's X_1 se's 
+mean(simulation4[,4]) #simulation 4's X_1 se's 
+
+mean(simulation3[,4])  #Simulation 3's Intercept se
+mean(simulation4[,3])  #Simulation 4's Intercept se
+
+```
+
+## Question 4
+First, consider a custom inverse logit function that will be used later:
+```{r inv}
+
+inv.logit = function(x){
+  if(!is.numeric(x)){return("Error 404: Numbers Not Found")}
+  exp(x)/(1+exp(x))
+}
+
+inv.logit(.95)
+inv.logit("Normative")
+```
+
+In Question 4 we will attempt to fit a linear model to binary data and record our results. The DGP is included in the simulation:
+
+```{r Q4}
+
+library(Rlab) #for rbern() function
+simulation5 <- matrix(nrow = 1000, ncol = 6)
+#head(simulation5)
+
+for (i in 1:1000)
+{
+  N <- 1000
+  mu <- c(5,5)
+  Sigma <- matrix( c(2, .5, .5, 3 ), nrow = 2, ncol= 2) 
+  mvr <- mvrnorm(N, mu, Sigma) #using MASS package
+  b <- c(.2, -1, 1.2)
+  e <- rnorm(N, 0, sd=sqrt(4))
+  ones <- matrix(1, nrow=1000, ncol=1)
+  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  y <- as.numeric(y >= median(y)) #Setting y 0-1 based around median.
+  
+  #Inverse Logits
+  #Intercept
+  inv.logit.a <- inv.logit(b[1]*X[,1]) 
+  b0 <- matrix(inv.logit.a, nrow=N, ncol= 1)
+  
+  #X_1
+  inv.logit.x2 <- inv.logit(b[2]*X[,2]) 
+  b1 <- matrix(inv.logit.x2, nrow=N, ncol= 1)
+  
+  #X_2
+  inv.logit.x3 <- inv.logit(b[3]*X[,3]) 
+  b2 <- matrix(inv.logit.x3, nrow=N, ncol= 1)
+  
+  pi <- matrix(c(b0, b1, b2), nrow=N, ncol=3)
+  y <- rbern(N, pi)
+  
+  m5 <- lm(y ~ X[,2]+ X[,3])
+  sm5 <- summary(m5)
+
+  simulation5[i,1] <- sm5$coef[1,1] #Intercept estimate
+  simulation5[i,2] <- sm5$coef[2,1] #x_1 coef estimate
+  simulation5[i,3] <- sm5$coef[3,1] #x_2 coef estimate
+  
+  simulation5[i,4] <- sm5$coef[1,2] #standard error for Intercept
+  simulation5[i,5] <- sm5$coef[2,2] #se x_1
+  simulation5[i,6] <- sm5$coef[3,2] #se x_2
+}
+
+# head(simulation5) #Check
+
+
+```
+
+
+
+```{r Plot Q4, echo=FALSE}
+
+
+library(ggplot2)
+#Creating each graph as an object (p) and the location I wish
+#  the multiplot function to place them at.
+
+#Intercept Simulation 5
+p1 <- qplot(simulation5[,1])+
+  theme_bw()+
+  ggtitle(expression(paste(beta[0], " Values (Sim. 5)")))+
+  xlab(expression(paste("Simulated ", beta[0])))
+
+#X_1 Simulation 5
+p2 <- qplot(simulation5[,2])+
+  theme_bw()+
+  ggtitle(expression(paste( x[1], " Values (Sim. 5)")))+
+  xlab(expression(paste("Simulated ", beta[1])))
+
+#X_2 Simulation 5
+p3 <- qplot(simulation5[,3])+
+  theme_bw()+
+  ggtitle(expression(paste( x[2], " Values (Sim. 5)")))+
+  xlab(expression(paste("Simulated ", beta[2])))
+
+
+predictm5 <- qplot(predict(m5))+
+  theme_bw()+
+  ggtitle("Pr. Values (Sim. 5)")
+
+#custom multiplot function, I rearranged some of the graph objects to arrange them better
+multiplot(p1, p2, p3, predictm5, cols=3, rows=2)
+
+
+```
+
+Here we see the three estimates from our simulation and our model's prediction based upon the R \texttt{predict()} command. Our estimates are definately off and our predictions seem to be off because of this. Perhaps running a proper logit model will help.
+
+## Question 5
+
+In question 5 we run the same DGP but with the proper modeling using the \texttt{glm()} function, and the proper link function.
+
+```{r q5}
+simulation7 <- matrix(nrow = 1000, ncol = 6)
+#head(simulation7)
+library(Rlab)
+
+for (i in 1:1000)
+{
+  N <- 1000
+  mu <- c(5,5)
+  Sigma <- matrix( c(2, .5, .5, 3 ), nrow = 2, ncol= 2) 
+  mvr <- mvrnorm(N, mu, Sigma)
+  b <- c(.2, -1, 1.2)
+  e <- rnorm(N, 0, sd=sqrt(4))
+  ones <- matrix(1, nrow=1000, ncol=1)
+  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  y <- as.numeric(y >= median(y))
+  
+  #Inverse Logits
+  #Intercept
+  inv.logit.a <- inv.logit(b[1]*X[,1]) 
+  b0 <- matrix(inv.logit.a, nrow=N, ncol= 1)
+  
+  #X_1
+  inv.logit.x2 <- inv.logit(b[2]*X[,2]) 
+  b1 <- matrix(inv.logit.x2, nrow=N, ncol= 1)
+  
+  #X_2
+  inv.logit.x3 <- inv.logit(b[3]*X[,3]) 
+  b2 <- matrix(inv.logit.x3, nrow=N, ncol= 1)
+  
+  pi <- matrix(c(b0, b1, b2), nrow=N, ncol=3)
+  y <- rbern(N, pi)
+  
+  
+  #Using the proper function:
+  m7 <- glm(y ~ X[,2]+ X[,3], family = binomial(link=logit))
+  sm7 <- summary(m7)
+  
+  simulation7[i,1] <- sm7$coef[1,1] #Intercept estimate
+  simulation7[i,2] <- sm7$coef[2,1] #x_1 coef estimate
+  simulation7[i,3] <- sm7$coef[3,1] #x_2 coef estimate
+  
+  simulation7[i,4] <- sm7$coef[1,2] #standard error for Intercept
+  simulation7[i,5] <- sm7$coef[2,2] #se x_1
+  simulation7[i,6] <- sm7$coef[3,2] #se x_2
+}
+
+#head(simulation7)
+
+```
+
+
+```{r plot 5, echo=FALSE}
+p1 <- qplot(simulation7[,1])+
+  theme_bw()+
+  ggtitle(expression(paste(beta[0], " Values (Sim. 7)")))+
+  xlab(expression(paste("Simulated ", beta[0])))
+
+#X_1 Simulation 7
+p3 <- qplot(simulation7[,2])+
+  theme_bw()+
+  ggtitle(expression(paste( x[1], " Values (Sim. 7)")))+
+  xlab(expression(paste("Simulated ", beta[1])))
+
+#X_2 Simulation 7
+p5 <- qplot(simulation7[,3])+
+  theme_bw()+
+  ggtitle(expression(paste( x[2], " Values (Sim. 7)")))+
+  xlab(expression(paste("Simulated ", beta[2])))
+
+pred7 <-predict(m7)
+probs <- exp(pred7)/(1+exp(pred7))
+
+full <- qplot(probs)+
+  theme_bw()+
+  ggtitle("Pr. Values (Sim. 7)")
+
+
+binary.probs <- as.numeric(probs > 0.5 )
+
+p6 <- qplot(binary.probs)+
+  theme_bw()+
+  ylab("Number of Predictions")+
+  xlab("Ratio of Correct Prediction, Model 7")+
+  ggtitle("Predictions of Model 7")
+
+
+multiplot(p1, p3, p5, full, p6, cols=3)
+
+
+
+```
+
+We can see from the visualizations above that our proper model, when specified, have some confusing beta values but generate some predictd probabilities that are often right. These predicted values are using the following code:
+
+```{r code}
+pred7 <-predict(m7) #predicted values of model 7
+probs <- exp(pred7)/(1+exp(pred7)) #make this probabilities via inverse logit
+
+binary.probs <- as.numeric(probs > 0.5 ) #set these as binary and save object for plotting
+
+```
+
+
+In the future I hope to revisit the model and parse out what went wrong in the DGP or my model to give non-intuitive beta results, and perhaps rethink how to plot predicted probabilities so that readers can gain intutive insight in actual publications. To the degree that these are false postives or false negatives are unknown, but perhaps could be paired against our pre-defined DGP - a luxury prehaps not available in the real world. 
+
