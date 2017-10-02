@@ -1,0 +1,336 @@
+
+\documentclass[12pt]{article}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\usepackage{scrextend}
+\usepackage[T1]{fontenc}
+\usepackage{amsfonts, amsmath, amsthm, amssymb} % Math tools
+\usepackage[top = 1in, left = 1in, right = 1in, bottom = 1in]{geometry}
+\usepackage{setspace}
+\usepackage[bookmarks = false, hidelinks]{hyperref} 
+\usepackage{float}
+\usepackage{subcaption}
+\usepackage{siunitx}
+\usepackage[compact]{titlesec}
+\usepackage{listings} %Footnote Formatting
+\usepackage{baskervald} % Font
+\usepackage{enumitem} %Footnote Formatting
+\usepackage[style = american]{csquotes}
+\usepackage[american]{babel} % Font
+
+% Footnote Formatting
+\setlist{nolistsep, noitemsep}
+\setlength{\footnotesep}{1.2\baselineskip}
+\deffootnote[.2in]{0in}{0em}{\normalsize\thefootnotemark.\enskip}
+
+% Section Formatting 
+\def\ci{\perp\!\!\!\perp}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\normalsize\bfseries}
+
+\DeclareMathOperator{\E}{\mathbb{E}}
+
+\pagestyle{plain}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\begin{document}
+
+\begin{center}
+\textbf{Lab Assignment 3: Quant III}\\
+Kyle Davis\\
+
+Working largely alongside Andrew Goodhart
+\end{center}
+\begin{flushleft}
+
+\noindent \textbf{Question 1:}
+
+A new DGP:
+
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{set.seed}\hlstd{(}\hlnum{12345}\hlstd{)}
+\hlkwd{library}\hlstd{(ggplot2)}
+\hlkwd{library}\hlstd{(MASS)}
+\hlkwd{library}\hlstd{(caret)}
+\hlkwd{library}\hlstd{(readtext)} \hlcom{#for text data}
+\hlkwd{library}\hlstd{(quanteda)} \hlcom{#^}
+\hlkwd{library}\hlstd{(Rlab)}
+\hlkwd{library}\hlstd{(boot)}     \hlcom{#runs inv.logit}
+\hlkwd{library}\hlstd{(e1071)}    \hlcom{#helps run Nbayes train()}
+
+\hlstd{N}     \hlkwb{<-} \hlnum{1000}
+\hlstd{P}     \hlkwb{<-} \hlnum{20}
+\hlstd{mu}    \hlkwb{<-} \hlkwd{runif}\hlstd{(P,} \hlopt{-}\hlnum{1}\hlstd{,}\hlnum{1}\hlstd{)}
+\hlstd{Sigma} \hlkwb{<-} \hlkwd{rWishart}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{df}\hlstd{=P,} \hlkwc{Sigma}\hlstd{=}\hlkwd{diag}\hlstd{(P))[,,}\hlnum{1}\hlstd{]}
+\hlstd{Sigma} \hlkwb{<-} \hlkwd{ifelse}\hlstd{(}\hlkwd{row}\hlstd{(Sigma)} \hlopt{!=} \hlkwd{col}\hlstd{(Sigma),} \hlnum{0}\hlstd{, Sigma)} \hlcom{# deletes the off diagonal }
+\hlcom{# values to ensure independence.  }
+\hlstd{X}     \hlkwb{<-} \hlkwd{mvrnorm}\hlstd{(N,} \hlkwc{mu}\hlstd{=mu,} \hlkwc{Sigma} \hlstd{= Sigma)}
+\hlstd{p}     \hlkwb{<-} \hlkwd{rbern}\hlstd{(P,} \hlnum{0.37}\hlstd{)}
+\hlstd{beta}  \hlkwb{<-} \hlstd{p}\hlopt{*}\hlkwd{rnorm}\hlstd{(P,}\hlnum{1}\hlstd{,}\hlnum{0.9}\hlstd{)} \hlopt{+} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{p)}\hlopt{*}\hlkwd{rnorm}\hlstd{(P,}\hlnum{0}\hlstd{,}\hlnum{0.3}\hlstd{)}
+\hlstd{eta}   \hlkwb{<-} \hlstd{X}\hlopt{%*%}\hlstd{beta}
+\hlstd{pi}    \hlkwb{<-} \hlkwd{inv.logit}\hlstd{(eta)}
+\hlstd{Y}     \hlkwb{<-} \hlkwd{rbern}\hlstd{(N, pi)}
+\hlcom{#sum(Y) #half success}
+
+\hlstd{Y}     \hlkwb{<-} \hlkwd{as.factor}\hlstd{(Y)}
+\hlstd{data.lab4} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(X, Y)}
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+
+\textbf{Question 2:}\\
+\hfill 
+Let's run predictions from a Naive Bayes model and check our errors between the actual model and these predicted values.
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{model} \hlkwb{<-} \hlkwd{naiveBayes}\hlstd{(Y} \hlopt{~} \hlstd{.,} \hlkwc{data} \hlstd{= data.lab4)}
+\hlcom{# class(model) #Great, it reports as a naivebayes model (checking)}
+
+\hlcom{#Model Characteristics}
+\hlcom{# summary(model) #(checking)}
+
+\hlcom{#Conditional Probabilities and a-priori probabilities:}
+\hlcom{# print(model) #these look about right, let's calculate predictions and report:}
+
+\hlstd{preds} \hlkwb{<-} \hlkwd{predict}\hlstd{(model,} \hlkwc{newdata} \hlstd{= data.lab4)}
+\hlstd{error} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(Y)} \hlopt{-} \hlkwd{as.numeric}\hlstd{(preds)}
+
+\hlcom{# Mean Aboslute Error}
+\hlkwd{mean}\hlstd{(}\hlkwd{abs}\hlstd{(error))}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.073
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+
+
+From just our errors and calculating predictions it looks like things went well (low MSE), let's plot these differences. Since I have chosen to use a dichotmous output I have jittered the final result because of overlapping.
+
+\begin{centering}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{qplot}\hlstd{(Y, preds,} \hlkwc{alpha}\hlstd{=}\hlkwd{I}\hlstd{(}\hlnum{0.25}\hlstd{))}\hlopt{+}
+  \hlkwd{geom_jitter}\hlstd{()}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Naive Bayes Predicted "}\hlstd{,} \hlkwd{hat}\hlstd{(y))))}\hlopt{+}
+  \hlkwd{ylab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Actual "}\hlstd{, y)))}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}\hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{12}\hlstd{),}
+        \hlkwc{axis.title}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{14}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4.5in]{figure/plot_-1} 
+
+\end{knitrout}
+\end{centering}
+
+We see that a large majority of our data still remains within congruent quadrents of the graph, with some error randomly distributed to either side. Let's follow this with an elastic net for comparison:
+
+\begin{centering}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{mod_enet} \hlkwb{<-} \hlkwd{train}\hlstd{(Y}\hlopt{~}\hlstd{.,} \hlkwc{method}\hlstd{=}\hlstr{"glmnet"}\hlstd{,}
+                 \hlkwc{tuneGrid}\hlstd{=}\hlkwd{expand.grid}\hlstd{(}\hlkwc{alpha}\hlstd{=}\hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{0.1}\hlstd{),}
+                                      \hlkwc{lambda}\hlstd{=}\hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{200}\hlstd{,}\hlnum{1}\hlstd{)),}
+                 \hlkwc{data}\hlstd{=data.lab4,}
+                 \hlkwc{preProcess}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"center"}\hlstd{),}
+                 \hlkwc{trControl}\hlstd{=}\hlkwd{trainControl}\hlstd{(}\hlkwc{method}\hlstd{=}\hlstr{"cv"}\hlstd{,}\hlkwc{number}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{search}\hlstd{=}\hlstr{"grid"}\hlstd{))}
+
+
+\hlstd{yhat} \hlkwb{=} \hlkwd{predict}\hlstd{(mod_enet)}
+\hlkwd{qplot}\hlstd{(Y, yhat,} \hlkwc{alpha}\hlstd{=}\hlkwd{I}\hlstd{(}\hlnum{0.25}\hlstd{))}\hlopt{+}
+  \hlkwd{geom_jitter}\hlstd{()}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Training "}\hlstd{,} \hlkwd{hat}\hlstd{(y))))}\hlopt{+}
+  \hlkwd{ylab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Elastic Net "}\hlstd{, y)))}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}\hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{12}\hlstd{),}
+        \hlkwc{axis.title}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{14}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4in]{figure/enet1-1} 
+\begin{kframe}\begin{alltt}
+\hlstd{enet_beta} \hlkwb{=} \hlkwd{coef}\hlstd{(mod_enet}\hlopt{$}\hlstd{finalModel, mod_enet}\hlopt{$}\hlstd{bestTune}\hlopt{$}\hlstd{lambda)}
+\hlkwd{qplot}\hlstd{(beta, enet_beta[}\hlopt{-}\hlnum{1}\hlstd{])}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"True "} \hlstd{, beta)))}\hlopt{+}
+  \hlkwd{ylab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Elastic Net "} \hlstd{,} \hlkwd{hat}\hlstd{(beta))))}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}\hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{12}\hlstd{),}
+        \hlkwc{axis.title}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{14}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4in]{figure/enet1-2} 
+
+\end{knitrout}
+\end{centering}
+
+We see with the elastic net, less variation at the opposite ends. Furthermore, our beta's seem to run together pretty well. For these reasons I'll proclaim the elastic net to do a better job than the Naive Bayes but only at the margins for this case. 
+
+\textbf{Question 3:}\\
+\hfill \\
+
+Increasing probability of success ($1$) and reporting results, just elastic net this time:
+
+\begin{centering}
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlstd{N} \hlkwb{<-} \hlnum{1000}
+\hlstd{P} \hlkwb{<-} \hlnum{20}
+\hlstd{mu2} \hlkwb{<-} \hlkwd{runif}\hlstd{(P,} \hlnum{0.5}\hlstd{,} \hlnum{1.5}\hlstd{)}
+\hlstd{Sigma2} \hlkwb{<-} \hlkwd{rWishart}\hlstd{(}\hlkwc{n}\hlstd{=}\hlnum{1}\hlstd{,} \hlkwc{df}\hlstd{=P,} \hlkwc{Sigma}\hlstd{=}\hlkwd{diag}\hlstd{(P))[,,}\hlnum{1}\hlstd{]}
+\hlstd{Sigma2} \hlkwb{<-} \hlkwd{ifelse}\hlstd{(}\hlkwd{row}\hlstd{(Sigma2)} \hlopt{!=} \hlkwd{col}\hlstd{(Sigma2),} \hlnum{0}\hlstd{, Sigma2)}
+\hlstd{X2} \hlkwb{<-} \hlkwd{mvrnorm}\hlstd{(N,} \hlkwc{mu}\hlstd{=mu2,} \hlkwc{Sigma} \hlstd{= Sigma2)}
+\hlstd{p2} \hlkwb{<-} \hlkwd{rbern}\hlstd{(P,} \hlnum{1}\hlstd{)}
+\hlstd{beta2} \hlkwb{<-} \hlstd{p2}\hlopt{*}\hlkwd{rnorm}\hlstd{(P,}\hlnum{1}\hlstd{,}\hlnum{0.1}\hlstd{)} \hlopt{+} \hlstd{(}\hlnum{1}\hlopt{-}\hlstd{p2)}\hlopt{*}\hlkwd{rnorm}\hlstd{(P,}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{)}
+\hlstd{eta2} \hlkwb{<-} \hlstd{X2}\hlopt{%*%}\hlstd{beta2}
+\hlstd{pi2} \hlkwb{<-} \hlkwd{inv.logit}\hlstd{(eta2)}
+\hlstd{Y2} \hlkwb{<-}\hlkwd{rbern}\hlstd{(N, pi2)}
+\hlstd{Y2} \hlkwb{<-} \hlkwd{as.factor}\hlstd{(Y2)}
+\hlstd{data2.lab4} \hlkwb{<-} \hlkwd{data.frame}\hlstd{(X2, Y2)}
+
+
+\hlstd{model2} \hlkwb{<-} \hlkwd{naiveBayes}\hlstd{(Y2} \hlopt{~} \hlstd{.,} \hlkwc{data} \hlstd{= data2.lab4)}
+\hlcom{# print(model2)}
+\hlstd{preds2} \hlkwb{<-} \hlkwd{predict}\hlstd{(model2,} \hlkwc{newdata} \hlstd{= data2.lab4)}
+\hlstd{error2} \hlkwb{<-} \hlkwd{as.numeric}\hlstd{(Y2)} \hlopt{-} \hlkwd{as.numeric}\hlstd{(preds2)}
+
+\hlcom{# Mean Aboslute Error}
+\hlkwd{mean}\hlstd{(}\hlkwd{abs}\hlstd{(error2))}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.07
+\end{verbatim}
+\begin{alltt}
+\hlcom{#Elastic Net:}
+
+\hlstd{mod_enet2} \hlkwb{<-} \hlkwd{train}\hlstd{(Y2}\hlopt{~}\hlstd{.,} \hlkwc{method}\hlstd{=}\hlstr{"glmnet"}\hlstd{,}
+                  \hlkwc{tuneGrid}\hlstd{=}\hlkwd{expand.grid}\hlstd{(}\hlkwc{alpha}\hlstd{=}\hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{1}\hlstd{,}\hlnum{0.1}\hlstd{),}
+                                       \hlkwc{lambda}\hlstd{=}\hlkwd{seq}\hlstd{(}\hlnum{0}\hlstd{,}\hlnum{200}\hlstd{,}\hlnum{1}\hlstd{)),}
+                  \hlkwc{data}\hlstd{=data2.lab4,}
+                  \hlkwc{preProcess}\hlstd{=}\hlkwd{c}\hlstd{(}\hlstr{"center"}\hlstd{),}
+                  \hlkwc{trControl}\hlstd{=}\hlkwd{trainControl}\hlstd{(}\hlkwc{method}\hlstd{=}\hlstr{"cv"}\hlstd{,}\hlkwc{number}\hlstd{=}\hlnum{2}\hlstd{,} \hlkwc{search}\hlstd{=}\hlstr{"grid"}\hlstd{))}
+
+
+\hlstd{yhat2} \hlkwb{=} \hlkwd{predict}\hlstd{(mod_enet2)}
+\hlkwd{qplot}\hlstd{(Y2, yhat2,} \hlkwc{alpha}\hlstd{=}\hlkwd{I}\hlstd{(}\hlnum{0.25}\hlstd{))}\hlopt{+}
+  \hlkwd{geom_jitter}\hlstd{()}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Training "}\hlstd{,} \hlkwd{hat}\hlstd{(y))))}\hlopt{+}
+  \hlkwd{ylab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Elastic Net "}\hlstd{, y)))}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}\hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{12}\hlstd{),}
+        \hlkwc{axis.title}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{14}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4in]{figure/2-1} 
+\begin{kframe}\begin{alltt}
+\hlstd{enet_beta2} \hlkwb{=} \hlkwd{coef}\hlstd{(mod_enet2}\hlopt{$}\hlstd{finalModel, mod_enet2}\hlopt{$}\hlstd{bestTune}\hlopt{$}\hlstd{lambda)}
+\hlkwd{qplot}\hlstd{(beta2, enet_beta2[}\hlopt{-}\hlnum{1}\hlstd{])}\hlopt{+}
+  \hlkwd{xlab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"True "} \hlstd{, beta)))}\hlopt{+}
+  \hlkwd{ylab}\hlstd{(} \hlkwd{expression}\hlstd{(}\hlkwd{paste}\hlstd{(}\hlstr{"Elastic Net "} \hlstd{,} \hlkwd{hat}\hlstd{(beta))))}\hlopt{+}
+  \hlkwd{theme_bw}\hlstd{()}\hlopt{+}
+  \hlkwd{theme}\hlstd{(}\hlkwc{axis.text}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{12}\hlstd{),}
+        \hlkwc{axis.title}\hlstd{=}\hlkwd{element_text}\hlstd{(}\hlkwc{size}\hlstd{=}\hlnum{14}\hlstd{))}
+\end{alltt}
+\end{kframe}
+\includegraphics[width=4in]{figure/2-2} 
+
+\end{knitrout}
+\end{centering}
+
+
+We see that our elastic net does well fitting data even when our probabilities are more stacked at one end. Yet, our variance on our predicted Y's went down, and our betas seem to have a lot more variance. This change in variance is likely because of the lack of overlap (coverage is the official termonology I beleive) within our data. When working with less observations where our Y's are zero has lead to more variation in our betas. 
+
+\textbf{Question 4:}
+
+For Question 4 I ran into multiple problems at intial stages, unfortunately I ran out of time (life got in the way this week) to troubleshoot some of these problems and come to substansive results worth noting. I'll leave some of the intial stages coding and issues here:
+
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlcom{# load("file:///C:/Users/Shing/Documents/- Previous Course Info/Quant III/POLI7553_Lab4.RData")}
+
+\hlcom{#Create Data Frame for use.}
+\hlcom{# sparse <- as(review_mat, "sparseMatrix")}
+\hlcom{# sparse <- as.data.frame(as.matrix(sparse))}
+\hlcom{# text.data <- data.frame(review_sentiment, sparse)}
+\hlcom{#  names(text.data)   #Check}
+
+
+\hlkwd{library}\hlstd{(stringr)} \hlcom{#Helps clean text data}
+
+\hlcom{# Take out symbols and unwanted misc stuff:}
+\hlcom{#  text.data <- stringr::str_replace_all(names(text.data),"[^a-zA-Z\textbackslash{}\textbackslash{}s]", " ")}
+
+\hlcom{# Shrink down to just one remaining white space:}
+\hlcom{#  text.data <- stringr::str_replace_all(names(text.data),"[\textbackslash{}\textbackslash{}s]+", " ")}
+
+\hlcom{#  names(text.data) #check}
+
+\hlcom{# A way to delete X's?}
+\hlcom{# not.want <- which(names(text.data) %in% c("Var_10", "Var_2", "Var_8"))}
+\hlcom{# dat <- dat[, -not.want]}
+\hlcom{#dat }
+\end{alltt}
+\end{kframe}
+\end{knitrout}
+
+Beyond just learning how to use text as data, I think I missed some intutions about what the real goal in model building was in the first place. Was the goal to use tools such as LASSO to find words that were significant and then use those words in a predictive model (say, logit for binary dependent variable)? Also, we have not had much practice in how to clean data, which is surprising given it's assumed prevelance in research -- how do you delete rows of data and more efficiently clean string data? I've started learning this methodology too late. I'll plan to revisit most of this for future reference.
+
+\end{flushleft}
+\end{document}
