@@ -31,7 +31,6 @@ mean(taylor.series)
 
 
 
-
 #####
 # Question 2
 
