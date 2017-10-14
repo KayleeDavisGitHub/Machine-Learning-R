@@ -17,5 +17,5 @@ Lab 5 goes into using Support Vector Models (SVMs) and classification trees for 
 Both labs provide vizualizations and attempts to summarize a dense methodological approach by providing .pdf's (and LaTeX code) detailing the intution behind these approaches. 
 
 
-
+Questions?
 Email: MailKyleDavis@gmail.com
