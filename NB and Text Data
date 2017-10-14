@@ -34,7 +34,6 @@ Y     <- as.factor(Y)
 data.lab4 <- data.frame(X, Y)
 
 
-
 # naiveBayes Check:
 model <- naiveBayes(Y ~ ., data = data.lab4)
 class(model) #These can have tendency to over-state results.
