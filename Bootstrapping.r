@@ -1,34 +1,12 @@
-#LAB 2
-#Notes
+# LAB 2; bootstrapping practice. Kyle Davis
 #####
-#Notes (mostly Q1)
-
-# Models to be fixed? Or is heteroskedasticity something to be included and examined? 
-# 
-# Expected value of (y) where y=1/x for media focus groups=x
-# Use Tayler series expansions around mu to approximate  y= g(x) = 1/x
-# Look up Jensons Inequality for why it's not easy.
-
-
-# We can find mu(y) with simulation using Monte Carlo estimate. Gen x, Gen Y, find MC estimate of mu(y)
-# Monte Carlo error of the estimate will degrease 1/sqrt s   (?)
-# 
-# If we don't want to assume a DGP, we can bootstrap! many resamples from a finite sample, fitting model to each, storing est.
-# 
-# CLT = sqrt ( sig^2 / N) 
-# 
-
-
-
-
-
-
 
 
 
 
 #####
-#Question 1
+# Question 1
+# synthetic data:
 
 N <- 1000; S <- 1e5
 x <- rnorm(N, mean=10, sd=1)
@@ -40,7 +18,8 @@ mean(mean_x) ; 1/mean(mean_x)
 # Mean 10
 # 1/x = .1
 
-# Look into Taylor Series stuff
+# optional:
+# Look into Taylor Series:
 install.packages("pracma")
 library(pracma) #runs Local polynomial approximation through Taylor series.
 f <- function(x) 1/x
@@ -53,28 +32,10 @@ mean(taylor.series)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #####
-#Question 2
+# Question 2
 
-
+# Cosine Simularity Function:
 cos.sim <- function(x,y){
   if(!is.numeric(x)){return("Numbers Needed in matrix (x)")}
   if(!is.numeric(y)){return("Numbers Needed in matrix (y)")}
@@ -103,9 +64,6 @@ cos.sim(x,y) #Warns Users if value is string=T
 # their cosine "similarity" will always be 1 for x>0, and -1 for x<0. so x=0 if we subtract one to get our distance.
 # Some of this depends on if the values in the vectors are positive or negative. 
 
-# The Euclidean distance, on the other hand, depends on the magnitudes of the vectors. 
-# It will equal the square root of the sum of squares of the difference between the two vectors. Cos.sim just takes this difference.
-
 library(Rlab)
 
 N <-1000
@@ -116,7 +74,7 @@ cos.sim(x,y)
 
 
 
-#Empty matrix
+#Empty matrix for simulation:
 simulation1 <- matrix(nrow = 1000, ncol = 1)
 simulation2 <- matrix(nrow = 1000, ncol = 1)
 
@@ -159,23 +117,6 @@ p2
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #####
 #Question 3
 
@@ -192,32 +133,10 @@ sqrt(mean(exp_x))
 sqrt(mean(exp_x)/2)
 
 
-
-
 library(ggplot2)
 qplot(exp_x)+
   ggtitle("exp_x Histogram")+
   theme_bw()
-
-
-#Unconsious Stat. Solving?:
-# f<- function(x) mean(exp_x)%*%(mean(exp_x)/2)
-# integrate(f, lower = -Inf, upper = Inf)
-#error in doing this
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -275,17 +194,17 @@ texreg(l= list(m1), stars = numeric(0),
 
 #Changing out Errors: Overriding model 1
 
-N <- 1000
-mu <- c(5,5)
+N     <- 1000
+mu    <- c(5,5)
 Sigma <- matrix( c(2, 0, 0, 3), nrow = 2, ncol= 2)
-mvr <- mvrnorm(N, mu, Sigma)
-b <- c(2, -1, 3)
-e <- rnorm(N, 0, sd=sqrt(abs(x[,2]))) #error now changed
-ones <- matrix(1, nrow=1000, ncol=1)
-X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+mvr   <- mvrnorm(N, mu, Sigma)
+b     <- c(2, -1, 3)
+e     <- rnorm(N, 0, sd=sqrt(abs(x[,2]))) #error now changed
+ones  <- matrix(1, nrow=1000, ncol=1)
+X     <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+y     <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
 my_data <- data.frame(ones, mvr[,1], mvr[,2], y)
-m1 <- lm(y ~ X[,2] + X[,3])
+m1    <- lm(y ~ X[,2] + X[,3])
 
 #For Bootstrapping:
 bs.sample <- function(dat)
@@ -316,23 +235,6 @@ texreg(l= list(m1), stars = numeric(0),
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #####
 #Question 5
 
@@ -340,17 +242,17 @@ texreg(l= list(m1), stars = numeric(0),
 #Generate DGP:
 library(MASS) #for mvrnorm
 
-N <- 1000
-mu <- c(5,5)
+N     <- 1000
+mu    <- c(5,5)
 Sigma <- matrix( c(2, 0, 0, 3), nrow = 2, ncol= 2)
-mvr <- mvrnorm(N, mu, Sigma)
-b <- c(2, -1, 3)
-ones <- matrix(1, nrow=1000, ncol=1)
-X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-e <- rnorm(N, 0, sd=sqrt(4))
-y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+mvr   <- mvrnorm(N, mu, Sigma)
+b     <- c(2, -1, 3)
+ones  <- matrix(1, nrow=1000, ncol=1)
+X     <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+e     <- rnorm(N, 0, sd=sqrt(4))
+y     <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
 my_data <- data.frame(ones, mvr[,1], mvr[,2], y)
-m1 <- lm(y ~ X[,2] + X[,3], data=my_data)
+m1    <- lm(y ~ X[,2] + X[,3], data=my_data)
 # summary(m1) 
 
 
@@ -390,24 +292,6 @@ mTesty <- lm(test$y ~ 2(test$MVRx1) + (test$MVRx2)^3, data = test)
 
 mean((training.data - predict(mTesty))^2)
 # 85.41
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -461,7 +345,8 @@ library(ggplot2)
 qplot(mean_x)
 
 
-# 
+
+# Further (rough) notes:
 # std deviation = std. error in simulation, but there's some theoretical differences here.
 # Laws of large numbers! But we want our resampling to look about the same as our original N. 
 # So our bootstraps should converge towards the truth DGP, if data is clustered or grouped corrilated with one another may be off
@@ -473,10 +358,7 @@ qplot(mean_x)
 # two vectors we can do cosign simulators and get some uncertainty estimate. 
 #
 
-
-# This is non-paremetric bootstrapping, parameteric bootstrapping was in Lab 1
-# 
-
+# This is non-paremetric bootstrapping
 
 # Jackknifing is leaving one observation through taking out an observation, taking means and storing it at each step. 
 # Doesn't work too well in small samples. doesn't really give you much more than a regular bootstrap. 
