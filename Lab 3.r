@@ -232,7 +232,6 @@ enet_beta = coef(mod_ridge$finalModel, mod_ridge$bestTune$lambda)
 qplot(b, ridge_beta[-1])
 
 
-
 #Let's plot each of these:
 
 
