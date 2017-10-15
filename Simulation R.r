@@ -1,4 +1,4 @@
-#multiplot
+#  multiplot function will plot multiple ggplot graphs alongside each other.
 #####
 ###    This function will come in later:
 
@@ -42,47 +42,31 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 
 
 
-
-
-
-
-#Begin Lab
 #####
-#####  LAB 1 (accidently saved as Lab2)
-#      Submit on Carmen
 
 
 #Q1
-#####
-#              Question 1
 
 set.seed(12345)
-N <- 1000
-#Two random x variables, with same mean and same error. Both normal
-x_1 <- rnorm(N, mean=5, sd=sqrt(16))      
-x_2 <- rnorm(N, mean=5, sd=sqrt(16))
-#beta values to multiply with the Intercept, X_1, and X_2 matrix. 
-b <- c(2, -1, 3)                          
-#Perfect-world errors: e~Normal(0, sig^2). set pretty low, Number=1000
-e <- rnorm(N, 0, sd=sqrt(4))          
-#This vector of ones is to generate our intercept along with the "2" in our beta
+N    <- 1000
+# Two random x variables, with same mean and same error. Both normal
+x_1  <- rnorm(N, mean=5, sd=sqrt(16))      
+x_2  <- rnorm(N, mean=5, sd=sqrt(16))
+# beta values to multiply with the Intercept, X_1, and X_2 matrix. 
+b    <- c(2, -1, 3)                          
+# Perfect-world errors: e~Normal(0, sig^2). set pretty low, Number=1000
+e    <- rnorm(N, 0, sd=sqrt(4))          
+# This vector of ones is to generate our intercept along with the "2" in our beta
 ones <- matrix(1, nrow=1000, ncol=1)      
-X <- matrix(c(ones, x_1, x_2), nrow=N)
+X    <- matrix(c(ones, x_1, x_2), nrow=N)
 head(X)  #Checked that the Matrix comes out right, and is intuitive
-#y = intercept + b1*X_1 + b2*X_2 + some error
-y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e  
+# y = intercept + b1*X_1 + b2*X_2 + some error
+y    <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e  
 my_data <- data.frame(x_1, x_2, y) 
-#After having y, we can run our formula, OLS using lm()
-m1 <- lm(y ~ x_1 + x_2, data=my_data)                    
+# After having y, we can run our formula, OLS using lm()
+m1   <- lm(y ~ x_1 + x_2, data=my_data)                    
 summary(m1)$coef
 
-#Do these results make sense?
-
-
-#Q2
-
-#####
-##           Question 2
 
 #Empty matrix
 simulation1 <- matrix(nrow = 1000, ncol = 6)
@@ -90,15 +74,15 @@ head(simulation1) #To make an empty matrix of NA's to fill in simulated values l
 
 for (i in 1:1000)
 {
-  N <- 1000                           #Model from earlier
+  N   <- 1000                           #Model from earlier
   x_1 <- rnorm(N, mean=5, sd=sqrt(16))
   x_2 <- rnorm(N, mean=5, sd=sqrt(16))
-  b <- c(2, -1, 3)
-  e <- rnorm(N, 0, sd=sqrt(4))
+  b   <- c(2, -1, 3)
+  e   <- rnorm(N, 0, sd=sqrt(4))
   ones <- matrix(1, nrow=1000, ncol=1)
-  X <- matrix(c(ones, x_1, x_2), nrow=N)
-  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
-  m1 <- lm(y ~ x_1 + x_2)
+  X   <- matrix(c(ones, x_1, x_2), nrow=N)
+  y   <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  m1  <- lm(y ~ x_1 + x_2)
   
   sm1 <- summary(m1)      #summary table is used to easily locate each number to store
   
@@ -113,8 +97,6 @@ for (i in 1:1000)
 head(simulation1)  #To check our now-full matrix to see if values make sense
 
 
-
-
 #Removing x_2 now
 #New empty matrix
 simulation2 <- matrix(nrow = 1000, ncol = 4)
@@ -122,15 +104,15 @@ head(simulation2)  #Empty
 
 for (i in 1:1000)
 {
-  N <- 1000
+  N   <- 1000
   x_1 <- rnorm(N, mean=5, sd=sqrt(16)) 
   x_2 <- rnorm(N, mean=5, sd=sqrt(16))
-  b <- c(2, -1, 3)                      
-  e <- rnorm(N, 0, sd=sqrt(4))
+  b   <- c(2, -1, 3)                      
+  e   <- rnorm(N, 0, sd=sqrt(4))
   ones <- matrix(1, nrow=1000, ncol=1)
-  X <- matrix(c(ones, x_1, x_2), nrow=N)  
-  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e      
-  m1 <- lm(y ~ x_1)                    #no X_2 regressed, but included in DGP
+  X   <- matrix(c(ones, x_1, x_2), nrow=N)  
+  y   <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e      
+  m1  <- lm(y ~ x_1)                    #no X_2 regressed, but included in DGP
   
   sm1 <- summary(m1) 
   
@@ -155,7 +137,6 @@ for (i in 1:1000)
 #Our Intercept is off in simulation 2 because we didn't estimate our beta and x_2 
 
  
- 
  library(ggplot2)
  #Creating each graph as an object (p) and the location I wish
  #  the multiplot function to place them at.
@@ -178,7 +159,6 @@ for (i in 1:1000)
    ggtitle(expression(paste( x[2], " Values (Sim. 1)")))+
    xlab(expression(paste("Simulated ", beta[2])))
  
- 
  #Intercept Simulation 2
  p2 <- qplot(simulation2[,1])+
    theme_bw()+
@@ -195,8 +175,8 @@ for (i in 1:1000)
 #custom multiplot function, I rearranged some of the graph objects to arrange them better
 multiplot(p1, p2, p3, p4, p5, cols=3)
 
-#We see not much changes between Simulation 1 and 2 in terms of the X_1 beta, this makes sense because X_2's 
-#beta coeff is indifferent to X_1's
+# We see not much changes between Simulation 1 and 2 in terms of the X_1 beta, this makes sense because X_2's 
+# beta coeff is indifferent to X_1's
 
 mean(simulation1[,5]) #Simulation 1's X_1 se's (0.0158)
 mean(simulation2[,4]) #simulation 2's X_1 se's (0.0962)
@@ -206,44 +186,34 @@ mean(simulation1[,4])  #Simulation 1's Intercept se (.128)
 mean(simulation2[,3])  #Simulation 2's Intercept se (.615)
 #Errors are larger when we take x_2 out of our analysis (less variation understood)
 
-
-#How do these two simulations/models compare and contrast? 
-
-
+## Consider:
+#  How do these two simulations/models compare and contrast? 
 
 
 
-
-
-
-#Q3
-
-#####
-##              Question 3
 library(MASS)   #For the mvrnorm() function
 
-
-N <- 1000
+N     <- 1000
 #Set mean of variables
-mu <- c(5,5)
-x_1 <- rnorm(N, mean=5, sd=sqrt(16))
-x_2 <- rnorm(N, mean=5, sd=sqrt(16))
+mu    <- c(5,5)
+x_1   <- rnorm(N, mean=5, sd=sqrt(16))
+x_2   <- rnorm(N, mean=5, sd=sqrt(16))
 Sigma <- matrix( c(4, 2, 2, 4 ), nrow = 2, ncol= 2)
 #Sigma   # Note the cov is 2 b/c correlation is 0.5 in assignment
 #          Correlation = Covariance/(sd*sd), so Cov = Corr(sd*sd). In this case,
 #          cov = 0.5(2*2) = 0.5*4 = 2
 
 # Using the means, and their variance-covariance matricies we can get our values:
-mvr <- mvrnorm(N, mu, Sigma)
-#head(mvr)
-b <- c(2, -1, 3)
-e <- rnorm(N, 0, sd=sqrt(4))
+mvr  <- mvrnorm(N, mu, Sigma)
+# head(mvr)
+b    <- c(2, -1, 3)
+e    <- rnorm(N, 0, sd=sqrt(4))
 ones <- matrix(1, nrow=1000, ncol=1)
-#Plug all of this into our matrix "X"
-X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-#head(X)
-y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
-m1 <- lm(y ~ X[,2] + X[,3])
+# Plug all of this into our matrix "X"
+X    <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+# head(X)
+y    <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+m1   <- lm(y ~ X[,2] + X[,3])
 summary(m1)
 
 
@@ -254,18 +224,18 @@ head(simulation3)
 
 for (i in 1:1000)
 {
-  N <- 1000
-  mu <- c(5,5)
+  N   <- 1000
+  mu  <- c(5,5)
   x_1 <- rnorm(N, mean=5, sd=sqrt(16))
   x_2 <- rnorm(N, mean=5, sd=sqrt(16))
   Sigma <- matrix( c(4, 2, 2, 4), nrow = 2, ncol= 2)
   mvr <- mvrnorm(N, mu, Sigma)
-  b <- c(2, -1, 3)
-  e <- rnorm(N, 0, sd=sqrt(4))
+  b   <- c(2, -1, 3)
+  e   <- rnorm(N, 0, sd=sqrt(4))
   ones <- matrix(1, nrow=1000, ncol=1)
-  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
-  m1 <- lm(y ~ X[,2] + X[,3])
+  X   <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y   <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  m1  <- lm(y ~ X[,2] + X[,3])
   summary(m1)
   
   sm1 <- summary(m1)
@@ -284,10 +254,6 @@ for (i in 1:1000)
 head(simulation3)
   
 
-
-
-
-
 #Restricted Model Without x_2
 simulation4 <- matrix(nrow = 1000, ncol = 4)
 head(simulation4)
@@ -295,22 +261,21 @@ head(simulation4)
 
 for (i in 1:1000)
 {
-  N <- 1000
-  mu <- c(5,5)
+  N   <- 1000
+  mu  <- c(5,5)
   x_1 <- rnorm(N, mean=5, sd=sqrt(16))
   x_2 <- rnorm(N, mean=5, sd=sqrt(16))
   Sigma <- matrix( c(4, 2, 2, 4), nrow = 2, ncol= 2)
   mvr <- mvrnorm(N, mu, Sigma)
   mvr
-  b <- c(2, -1,3) 
-  e <- rnorm(N, 0, sd=sqrt(4))
+  b   <- c(2, -1,3) 
+  e   <- rnorm(N, 0, sd=sqrt(4))
   ones <- matrix(1, nrow=1000, ncol=1)
-  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e 
-  m1 <- lm(y ~ X[,2])
+  X   <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y   <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e 
+  m1  <- lm(y ~ X[,2])
   
   sm1 <- summary(m1)
-  
   
   #Estimates
   simulation4[i,1] <- sm1$coef[1,1] #recording Intercept Estimate
@@ -377,17 +342,7 @@ mean(simulation4[,3])  #Simulation 4's Intercept se
 
 
 
-
-
-
-
-
-#Q4
-
-#####
-##                                Question 4
-
-#Inverse Logit Function:
+# Inverse Logit Function:
 
 inv.logit = function(x){
   if(!is.numeric(x)){return("Error 404: Numbers Not Found")}
@@ -400,21 +355,21 @@ inv.logit("Normative")
 
 
 #                              Building Model
-N <- 1000
+N     <- 1000
 #Set mean of variable(s)
-mu <- c(5,5)
+mu    <- c(5,5)
 Sigma <- matrix( c(2, .5, .5, 3 ), nrow = 2, ncol= 2) 
 Sigma
 #Using the means, and their variance-covariance matricies we can get our values:
-mvr <- mvrnorm(N, mu, Sigma)
+mvr   <- mvrnorm(N, mu, Sigma)
 #head(mvr)
-b <- c(.2, -1, 1.2)
-e <- rnorm(N, 0, sd=sqrt(4))
-ones <- matrix(1, nrow=1000, ncol=1)
+b     <- c(.2, -1, 1.2)
+e     <- rnorm(N, 0, sd=sqrt(4))
+ones  <- matrix(1, nrow=1000, ncol=1)
 #Plug all of this into our matrix "X"
-X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+X     <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
 head(X)
-y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+y     <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
 
 median(y)
 y <- as.numeric(y >= 1.545866)
@@ -448,18 +403,12 @@ library(Rlab)
 y <- rbern(N, pi)
 y
 
-?rbern
-
+# Models:
 m1 <- lm(y ~ X[,2]+ X[,3])
 summary(m1)
 
 m1 <- glm(y ~ X[,2]+ X[,3], family = "binomial")
 summary(m1)
-
-
-
-
-
 
 
 
@@ -469,19 +418,19 @@ head(simulation5)
 
 for (i in 1:1000)
 {
-  N <- 1000
-  mu <- c(5,5)
+  N    <- 1000
+  mu   <- c(5,5)
   Sigma <- matrix( c(2, .5, .5, 3 ), nrow = 2, ncol= 2) 
-  mvr <- mvrnorm(N, mu, Sigma)
-  b <- c(.2, -1, 1.2)
-  e <- rnorm(N, 0, sd=sqrt(4))
+  mvr  <- mvrnorm(N, mu, Sigma)
+  b    <- c(.2, -1, 1.2)
+  e    <- rnorm(N, 0, sd=sqrt(4))
   ones <- matrix(1, nrow=1000, ncol=1)
-  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
-  y <- as.numeric(y >= median(y))
+  X    <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y    <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  y    <- as.numeric(y >= median(y))
   
-  #Inverse Logits
-  #Intercept
+  # Inverse Logits
+  # Intercept
   inv.logit.a <- inv.logit(b[1]*X[,1]) #All X variables multiplied by their respective beta values, inverse logit-ed
   b0 <- matrix(inv.logit.a, nrow=N, ncol= 1)
   
@@ -509,9 +458,6 @@ for (i in 1:1000)
 }
 
 head(simulation5)
-
-
-
 
 
 
@@ -553,30 +499,22 @@ predictm5
 
 
 
-
-
-#Q5
-#####
-#           Question 5
-
-
-
 simulation7 <- matrix(nrow = 1000, ncol = 6)
 #head(simulation7)
 library(Rlab)
 
 for (i in 1:1000)
 {
-  N <- 1000
-  mu <- c(5,5)
+  N    <- 1000
+  mu   <- c(5,5)
   Sigma <- matrix( c(2, .5, .5, 3 ), nrow = 2, ncol= 2) 
-  mvr <- mvrnorm(N, mu, Sigma)
-  b <- c(.2, -1, 1.2)
-  e <- rnorm(N, 0, sd=sqrt(4))
+  mvr  <- mvrnorm(N, mu, Sigma)
+  b    <- c(.2, -1, 1.2)
+  e    <- rnorm(N, 0, sd=sqrt(4))
   ones <- matrix(1, nrow=1000, ncol=1)
-  X <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
-  y <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
-  y <- as.numeric(y >= median(y))
+  X    <- matrix(c(ones, mvr[,1], mvr[,2]), nrow=N)
+  y    <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
+  y    <- as.numeric(y >= median(y))
   
   #Inverse Logits
   #Intercept
@@ -610,16 +548,13 @@ for (i in 1:1000)
 
 #head(simulation7)
 
-
-
-
 full <- qplot(predict(m7))+
   theme_bw()+
   ggtitle("Pr. Values (Sim. 7)")
 
 
 
-#Plotting
+# Plotting
 
 library(ggplot2)
 #Creating each graph as an object (p) and the location I wish
@@ -661,11 +596,9 @@ p4 <- qplot(simulation8[,2])+
 multiplot(p1, p2, p3, p4, p5, cols=3)
 
 
-
 library(ggplot2)
 pred7 <-predict(m7)
 probs <- exp(pred7)/(1+exp(pred7))
-
 
 binary.probs <- as.numeric(probs > 0.5 )
 qplot(bin.probs)+
@@ -673,15 +606,6 @@ qplot(bin.probs)+
   ylab("Number of Predictions")+
   xlab("Ratio of Correct Prediction, Model 7")+
   ggtitle("Predictions of Model 7")
-
-
-
-
-
-
-#gets messy at end, might need to revist a lot of this/
-
-
 
 
 
