@@ -2,13 +2,15 @@
 # Lab 5; Quant III, Kyle Davis
 # Collapse All: ALT+O
 # Instert Section: CTRL+SHIFT+R
-getwd()
+
+getwd() #get working directory (check)
+# specify computer cores for computationally heavy tasks:
 library(doParallel)
 registerDoParallel(cl = makeCluster(detectCores()))
 
 # 1: Generating DGP --------------------------------------------------------------
 
-
+# packages used:
 library(caret)
 library(MASS)
 library(Rlab)
