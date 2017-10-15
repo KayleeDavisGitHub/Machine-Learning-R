@@ -2,14 +2,12 @@
 #####
 
 
-
-
 #####
 # Question 1
 # synthetic data:
 
-N <- 1000; S <- 1e5
-x <- rnorm(N, mean=10, sd=1)
+N      <- 1000; S <- 1e5
+x      <- rnorm(N, mean=10, sd=1)
 mean_x <- rep(NA, S) #Empty Matrix
 
 mean_x <- sample(x, 1e7, replace=TRUE, prob = NULL)
@@ -25,9 +23,7 @@ library(pracma) #runs Local polynomial approximation through Taylor series.
 f <- function(x) 1/x
 taylor.series <- taylor(f, mean(mean_x), n = 4) #taylor(function, series expansion, Taylor Series Order (1:4))
 mean(taylor.series)
-
-
-
+# a taylor series can (using mostly derivatives) transform complex functions into more manageable approximations.
 
 
 
@@ -38,7 +34,7 @@ mean(taylor.series)
 cos.sim <- function(x,y){
   if(!is.numeric(x)){return("Numbers Needed in matrix (x)")}
   if(!is.numeric(y)){return("Numbers Needed in matrix (y)")}
-  
+  # Formula:
   cosine.similarity <- sum( x%*%y )/(sqrt( sum(x^2) ) %*% sqrt( sum(y^2) ))
   distance <- cosine.similarity -1
   return.list <- list("cosine similarity" = cosine.similarity, "distance" = distance)
@@ -69,8 +65,6 @@ N <-1000
 x <- rbern(N, .5)
 y <- rbern(N, .5)
 cos.sim(x,y) 
-
-
 
 
 #Empty matrix for simulation:
@@ -112,8 +106,6 @@ p2 <- qplot(simulation2)+
 p1
 
 p2
-
-
 
 
 #####
@@ -174,21 +166,19 @@ bs.routine <- function(dat)
   coef(lm(y ~ X[,2] + X[,3], data = my_data))
 }
 
-bs_est <- replicate(1000, bs.routine(dat = my_data)) #replicate our estimates
-bs_mean <- rowMeans(bs_est) #report our bootstrap estimate means
-bs_ci <- t(apply(bs_est, 1, quantile, probs = c(0.05, 0.95))) #make ci's
-bs_results <- cbind(bs_mean, bs_ci) #create reference matrix for texreg
-colnames(bs_results) <- c("Est", "Low", "High") #rename
+bs_est <- replicate(1000, bs.routine(dat = my_data))  # replicate our estimates
+bs_mean <- rowMeans(bs_est)                           # report our bootstrap estimate means
+bs_ci <- t(apply(bs_est, 1, quantile, probs = c(0.05, 0.95))) # make ci's
+bs_results <- cbind(bs_mean, bs_ci)                   # create reference matrix for texreg
+colnames(bs_results) <- c("Est", "Low", "High")       # rename
 
-#create table output, overriding confidence intervals with bootstrap low-high bounds
+# create table output, overriding confidence intervals with bootstrap low-high bounds
 texreg(l= list(m1), stars = numeric(0),
        custom.coef.names = c("Intercept", "x_1", "x_2"),
        override.ci.low = c(bs_results[, 2]),
        override.ci.up = c(bs_results[, 3]),
        caption.above = T, float.pos = "h!",
        custom.note = "CI's Overridden by Bootstrap; [.05, .95]")
-
-
 
 
 #Changing out Errors: Overriding model 1
@@ -218,12 +208,13 @@ bs.routine <- function(dat)
   coef(lm(y ~ X[,2] + X[,3], data = my_data))
 }
 
-bs_est <- replicate(1000, bs.routine(dat = my_data))
+bs_est  <- replicate(1000, bs.routine(dat = my_data))
 bs_mean <- rowMeans(bs_est)
-bs_ci <- t(apply(bs_est, 1, quantile, probs = c(0.05, 0.95)))
+bs_ci   <- t(apply(bs_est, 1, quantile, probs = c(0.05, 0.95)))
 bs_results <- cbind(bs_mean, bs_ci)
 colnames(bs_results) <- c("Est", "Low", "High")
 
+# This will create a LaTeX table with overwritten CI's with our boostrapped errors
 texreg(l= list(m1), stars = numeric(0),
        custom.model.names = c("Changed Error Model 1"),
        custom.coef.names = c("Intercept", "x_1", "x_2"),
@@ -236,7 +227,6 @@ texreg(l= list(m1), stars = numeric(0),
 
 #####
 #Question 5
-
 
 #Generate DGP:
 library(MASS) #for mvrnorm
@@ -253,7 +243,6 @@ y     <- b[1]*X[,1]+ b[2]*X[,2]+ b[3]*X[,3] + e
 my_data <- data.frame(ones, mvr[,1], mvr[,2], y)
 m1    <- lm(y ~ X[,2] + X[,3], data=my_data)
 # summary(m1) 
-
 
 #Test set training set
 n = nrow(my_data)
@@ -278,7 +267,6 @@ mtest <- lm(test$y ~ test$MVRx1 + test$MVRx2, data = test)
 # summary(mtest)
 
 
-
 #MSE between full data and our training data
 mean((my_data - predict(mtrain))^2)
 # 92.37
@@ -291,8 +279,6 @@ mTesty <- lm(test$y ~ 2(test$MVRx1) + (test$MVRx2)^3, data = test)
 
 mean((training.data - predict(mTesty))^2)
 # 85.41
-
-
 
 
 # function to split into arbitrary number of sets
@@ -319,10 +305,6 @@ head(train)
 #matrix.train<- as.matrix(train)
 
 
-
-
-
-
 #mean_x <- rep(x, S)
 #?rep
 
@@ -345,9 +327,10 @@ qplot(mean_x)
 
 
 
-# Further (rough) notes:
+### Further (rough) hand notes if interested: Bootstrapping Errors and Cross Validation::
+#
 # std deviation = std. error in simulation, but there's some theoretical differences here.
-# Laws of large numbers! But we want our resampling to look about the same as our original N. 
+# Laws of large numbers is used, But we want our resampling to look about the same as our original N. 
 # So our bootstraps should converge towards the truth DGP, if data is clustered or grouped corrilated with one another may be off
 # bootstrapping can be modified for these data, doing different hierarchical clustering models for different types of this.
 #
@@ -356,17 +339,15 @@ qplot(mean_x)
 # 
 # two vectors we can do cosign simulators and get some uncertainty estimate. 
 #
-
+#
 # This is non-paremetric bootstrapping
-
+#
 # Jackknifing is leaving one observation through taking out an observation, taking means and storing it at each step. 
 # Doesn't work too well in small samples. doesn't really give you much more than a regular bootstrap. 
-
-# more concerned for if model fits well than theoretical, need good model to begin with, if it's crap we don't care
-
-
+#
+# more concerned for if model fits well than theoretical, need good model to begin with
+#
 # cross-validation is taking some data aside and having a test-set training-set. Our model see's the training set, then we validate
 # using a test set that we originally witheld. WE can either "leave one out" take off an observation and predict that value
 # And we can leave one out multiple times for each dataset across all observation. Or we could chunk the data and predcit chunks
-#
 
