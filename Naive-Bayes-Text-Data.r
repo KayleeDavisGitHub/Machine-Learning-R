@@ -87,18 +87,18 @@ qplot(beta, enet_beta[-1])+
 
 
 
-N <- 1000
-P <- 20
-mu2 <- runif(P, 0.5, 1.5)
+N      <- 1000
+P      <- 20
+mu2    <- runif(P, 0.5, 1.5)
 Sigma2 <- rWishart(n=1, df=P, Sigma=diag(P))[,,1]
 Sigma2 <- ifelse(row(Sigma2) != col(Sigma2), 0, Sigma2)
-X2 <- mvrnorm(N, mu=mu2, Sigma = Sigma2)
-p2 <- rbern(P, 1)
-beta2 <- p2*rnorm(P,1,0.1) + (1-p2)*rnorm(P,0,1)
-eta2 <- X2%*%beta2
-pi2 <- inv.logit(eta2)
-Y2 <-rbern(N, pi2)
-Y2 <- as.factor(Y2)
+X2     <- mvrnorm(N, mu=mu2, Sigma = Sigma2)
+p2     <- rbern(P, 1)
+beta2  <- p2*rnorm(P,1,0.1) + (1-p2)*rnorm(P,0,1)
+eta2   <- X2%*%beta2
+pi2    <- inv.logit(eta2)
+Y2     <- rbern(N, pi2)
+Y2     <- as.factor(Y2)
 data2.lab4 <- data.frame(X2, Y2)
 
 
@@ -144,7 +144,7 @@ qplot(beta2, enet_beta2[-1])+
 
 # 2: Text as data ---------------------------------------------------------
 
-# Load text data: here I loaded rotten tomatoes data.
+# Load text data:
 #load()
 text.data
 
@@ -155,7 +155,7 @@ text.data <- data.frame(review_sentiment, sparse)
 names(text.data) #Always check
 
 
-#Our data is already in lowercase, but a few things need to be cleaned up:
+#Our data could be already in lowercase, but a few things may need cleaning:
 
 library(stringr) #Helps clean text data
 # Take out symbols and unwanted misc stuff:
