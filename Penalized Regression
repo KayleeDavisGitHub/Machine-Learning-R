@@ -2,20 +2,19 @@
 # Penalized Regression (Lab 3); Kyle Davis
 # ALT+O to collapse all
 
-set.seed(12345)
-
+set.seed(12345) # for replication
 
 # 1: DGP and Test/Training Sets ----------------------------------------------------------------------
 
-
+# Packages:
 library(caret)
 library(MASS) #mvrnorm()
 library(texreg) #for tables
 library(Rlab) #for rbern()
 library(ggplot2)
 
-N <- 1000
-P <- 100
+N     <- 1000
+P     <- 100
 Sigma <- rWishart(n=1, df=P, Sigma=diag(P))[,,1] # Wishart distribution for positive definite matricies
 
 ## Note: the [,,1] is required because the Wishart is a distribution
@@ -30,9 +29,6 @@ y = X%*%b + e
 m1 <- lm(y~X)
 
 my_data = data.frame(X,y)
-
-
-
 
 
 ### Test Set; Training Set
@@ -53,7 +49,6 @@ train_data = data.frame(trainx, trainy)
 test_data = data.frame(testx, testy)
 
 
-
 # 2: Calculate Errors ----------------------------------------------------------------------
 
 
@@ -61,7 +56,6 @@ test_data = data.frame(testx, testy)
 ##  We can plot the true betas against the lm coefficients
 qplot(b, coef(m1)[-1])+
   theme_bw()
-
 
 #   Calculate error
 ##  error <- actual - predicted
@@ -84,9 +78,6 @@ sqrt(mean(error^2))
 
 #Mean Aboslute Error
 mean(abs(error))
-
-
-
 
 
 
@@ -131,9 +122,6 @@ qplot(trainy, yhat)+
 lasso_beta = coef(mod_lasso$finalModel, mod_lasso$bestTune$lambda)
 qplot(b, lasso_beta[-1])
 ## Note---the [-1] is because the model contains an intercept.
-
-
-
 
 
 
@@ -194,7 +182,6 @@ qplot(b, ridge_beta[-1])
 
 
 
-
 # 5: Elastic Net  ---------------------------------------------------------
 
 ###
@@ -231,7 +218,6 @@ qplot(b, ridge_beta[-1])
 
 
 #Let's plot each of these:
-
 
 qplot(mod_lasso$results$lambda, mod_lasso$results$RMSE)+
   theme_bw()
