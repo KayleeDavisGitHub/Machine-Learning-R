@@ -1,3 +1,6 @@
+[![No Maintenance Intended](http://unmaintained.tech/badge.svg)](http://unmaintained.tech/)
+
+
 # Machine-Learning
 -- Replication and notes on machine learning practice --		
 
